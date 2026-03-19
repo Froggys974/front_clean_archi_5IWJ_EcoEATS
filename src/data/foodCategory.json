@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "name": "Italian",
+    "description": "Pizza, pasta and traditional Italian dishes"
+  },
+  {
+    "id": 2,
+    "name": "International",
+    "description": "World cuisine like sushi and tacos"
+  },
+  {
+    "id": 3,
+    "name": "Salads",
+    "description": "Fresh and healthy salads"
+  },
+  {
+    "id": 4,
+    "name": "Fast Food",
+    "description": "Burgers, sandwiches and grilled items"
+  },
+  {
+    "id": 5,
+    "name": "Desserts",
+    "description": "Sweet treats and cakes"
+  }
+]
