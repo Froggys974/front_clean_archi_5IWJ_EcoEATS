@@ -187,4 +187,45 @@ export const DonutIcon = (props: IconProps) => (
     </Icon>
 )
 
+export const GooglePlayIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 33 33" fill="currentColor">
+       <path d="M17,14.5l4.2-4.5L4.9,1.2C4.8,1.1,4.6,1.1,4.3,1L17,14.5z"></path>
+        <path d="M23,21l5.9-3.2c0.7-0.4,1.1-1,1.1-1.8s-0.4-1.5-1.1-1.8L23,11l-4.7,5L23,21z"></path>
+        <path d="M2.4,1.9C2.1,2.2,2,2.6,2,3V29c0,0.4,0.1,0.8,0.4,1.2L15.6,16L2.4,1.9z"></path>
+        <path d="M17,17.5L4.3,31c0.2,0,0.4-0.1,0.6-0.2L21.2,22L17,17.5z"></path>
+    </Icon>
+)
+
+export const AppleStoreIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 32 32" fill="currentColor">
+        <path d="M11.7 32C8.9 32 7 29.5 5.6 27.4C2.2 22.1 1.5 15.5 4 11.7C5.7 9.1 8.4 7.5 11 7.5C12.4 7.5 13.6 7.9 14.5 8.3C15.2 8.6 15.9 8.8 16.6 8.8C17.2 8.8 17.8 8.6 18.5 8.3C19.5 8 20.6 7.5 22.2 7.5C24.5 7.5 26.9 8.8 28.6 10.9C28.8 11.1 28.9 11.4 28.8 11.7C28.7 12 28.6 12.2 28.3 12.4C26.4 13.4 25.4 15.3 25.6 17.4C25.7 19.6 27.1 21.4 29.1 22.1C29.4 22.2 29.6 22.4 29.7 22.7C29.8 23 29.8 23.2 29.7 23.5C29 25.1 28.7 25.8 27.7 27.1C26.1 29.4 24.3 31.9 21.8 31.9C20.7 31.9 19.9 31.6 19.3 31.3C18.6 31 18 30.7 16.7 30.7C15.5 30.7 14.8 31 14.1 31.3C13.6 31.7 12.8 32 11.7 32Z" />
+        <path d="M15.7 8.7H15.5C15 8.7 14.5 8.3 14.4 7.8C14.1 6 14.7 3.9 16.1 2.3C17.3 0.7 19.4 -0.3 21.3 -0.5C21.8 -0.5 22.3 -0.1 22.4 0.5C22.7 2.4 22 4.4 20.7 6.1C19.5 7.7 17.5 8.7 15.7 8.7Z" />
+    </Icon>
+)
+
+export const Icons = {
+    Window: WindowIcon,
+    File: FileIcon,
+    Globe: GlobeIcon,
+    PerfumeBottle: PerfumeBottleIcon,
+    Euro: EuroIcon,
+    LocatePeople: LocatePeopleIcon,
+    ArrowRight: ArrowRightIcon,
+    ArrowDown: ArrowDownIcon,
+    ArrowLeft: ArrowLeftIcon,
+    ArrowUp: ArrowUpIcon,
+    User: UserIcon,
+    Scooter: ScooterIcon,
+    Bag: BagIcon,
+    MapPin: MapPinIcon,
+    Search: SearchIcon,
+    Ring: RingIcon,
+    Payment: PaymentIcon,
+    Donut: DonutIcon,
+    GooglePlay: GooglePlayIcon,
+    AppleStore: AppleStoreIcon
+};
+
+export type IconName = keyof typeof Icons;
+
 

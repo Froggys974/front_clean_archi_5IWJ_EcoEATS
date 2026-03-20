@@ -1,7 +1,5 @@
 import React from "react";
-function cn(...inputs: (string | undefined | false | null)[]) {
-    return inputs.filter(Boolean).join(" ");
-}
+import { cn } from "@/utils/cn";
 
 interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
     children: React.ReactNode;
@@ -43,7 +41,7 @@ export function H2({ children, className, variant = "stone", align = "center", .
     return (
         <h2 
             className={cn(
-                "text-3xl font-bold", 
+                "text-5xl font-bold",
                 colorClasses[variant], 
                 alignClasses[align], 
                 className

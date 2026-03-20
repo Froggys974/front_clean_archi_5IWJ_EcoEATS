@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useRef, ReactNode } from "react";
-import { ArrowLeftIcon, ArrowRightIcon } from "@/components/icons";
 import { H2 } from "@/components/ui/Typography";
+import Button from "@/components/ui/Button";
 
 interface CarouselProps<T> {
     title?: string;
@@ -45,13 +45,14 @@ export default function Carousel<T>({ title, items, renderItem, keyExtractor, cl
             {title && <H2 className="mb-8">{title}</H2>}
             
             <div className="relative">
-                <button 
+                <Button 
                     onClick={() => scroll('left')}
-                    className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 -translate-x-20 z-10 p-3 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-colors shadow-sm hidden md:flex items-center justify-center"
+                    variant="accent"
+                    size="sm"
+                    className="absolute left-0 top-1/2 h-10 w-10 -translate-y-1/2 -translate-x-20 z-10 p-3 rounded-full bg-accent/10 text-accent hover:bg-accent/20 shadow-sm hidden md:flex"
                     aria-label="Précédent"
-                >
-                    <ArrowLeftIcon size={24} />
-                </button>
+                    icon="ArrowLeft"
+                />
 
                 <div 
                     ref={scrollContainerRef}
@@ -65,13 +66,14 @@ export default function Carousel<T>({ title, items, renderItem, keyExtractor, cl
                     ))}
                 </div>
 
-                <button 
+                <Button 
                     onClick={() => scroll('right')}
-                    className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 translate-x-20 z-10 p-3 rounded-full bg-accent/10 text-accent hover:bg-accent/20 transition-colors shadow-sm hidden md:flex items-center justify-center"
+                    variant="accent"
+                    size="md"
+                    className="absolute right-0 top-1/2 h-10 w-10 -translate-y-1/2 translate-x-20 z-10 p-3 rounded-full bg-accent/10 text-accent hover:bg-accent/20 shadow-sm hidden md:flex"
                     aria-label="Suivant"
-                >
-                    <ArrowRightIcon size={24} />
-                </button>
+                    icon="ArrowRight"
+                />
             </div>
         </section>
     );

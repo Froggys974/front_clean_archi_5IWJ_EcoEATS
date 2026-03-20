@@ -1,5 +1,6 @@
 import React from "react";
 import { H2 } from "@/components/ui/Typography";
+import Button from "@/components/ui/Button";
 
 interface SectionGridProps<T> {
     title?: string;
@@ -26,7 +27,7 @@ export default function SectionGrid<T>({
     const gridCols = `grid-cols-${columns.default} sm:grid-cols-${columns.sm} lg:grid-cols-${columns.lg}`;
 
     return (
-        <section className={`w-full max-w-7xl mx-auto px-4 py-8 ${className}`}>
+        <section className={`w-full flex flex-col gap-2 items-center max-w-7xl mx-auto px-4 py-8 ${className}`}>
             {title && <H2 className="mb-8">{title}</H2>}
             <div className={`grid ${gridCols} gap-6`}>
                 {items.map((item) => (
@@ -35,6 +36,7 @@ export default function SectionGrid<T>({
                     </div>
                 ))}
             </div>
+            <Button gradientDirection="right" gradient={true} variant="accent" href="/" className="rounded-md mt-2">Voir plus</Button>
         </section>
     );
 }

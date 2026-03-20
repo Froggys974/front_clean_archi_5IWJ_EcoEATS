@@ -1,6 +1,7 @@
 import Picture from "@/components/other/Picture";
 import { H1 } from "@/components/ui/Typography";
 import QuickSearch from "@/components/home/QuickSearch";
+import Button from "@/components/ui/Button";
 
 type HeaderProps = {
     title: string;

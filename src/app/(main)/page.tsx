@@ -8,6 +8,8 @@ import foodData from "@/data/food.json";
 import offerData from "@/data/offer.json";
 import placeData from "@/data/place.json";
 import { FoodItem, Offer, FoodWithRelations, Place } from "@/types/food";
+import SearchPerFood from "@/components/home/SearchPerFood";
+import ApplicationOnTheWay from "@/components/home/ApplicationOnTheWay";
 
 export default function Home() {
     const foods = foodData as FoodItem[];
@@ -63,6 +65,8 @@ export default function Home() {
                 <IconExplanationSection title="Comment ça marche ?" sections={sections} gradient={true} />
                 <FoodCarousel title="Populaires" foods={carouselFoods} />
                 <HighlightedRestaurants title="Restaurants mis en avant" restaurants={highlightedRestaurants} />
+                <SearchPerFood title="Recherche par nourriture" />
+                <ApplicationOnTheWay />
             </main>
         </div>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import { Place } from "@/types/food";
 import { ScooterIcon, UserIcon } from "@/components/icons";
 import { H3 } from "@/components/ui/Typography";
+import Button from "@/components/ui/Button";
 
 interface RestaurantCardProps {
     restaurant: Place;
@@ -47,8 +48,8 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                     </div>
                 )}
                 {restaurant.isFast && (
-                    <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm text-accent">
-                        <ScooterIcon size={20} />
+                    <div className="absolute bottom-3 right-0 bg-white text-accent px-3 py-1 rounded-l-full text-sm font-bold shadow-sm">
+                        Livraison rapide
                     </div>
                 )}
             </div>
@@ -66,17 +67,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                     <div className={`w-2 h-2 rounded-full ${open ? 'bg-green-500' : 'bg-red-500'}`}></div>
                     <span>{open ? 'Ouvert' : 'Fermé'}</span>
                     <span>•</span>
-                    <span>{restaurant.maxDeliveryTime} min</span>
-                </div>
-
-                <div className="mt-auto pt-4 border-t border-stone-50 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-stone-400">
-                        <UserIcon size={18} />
-                        <span className="text-xs">Populaire</span>
-                    </div>
-                    <button className="text-accent text-sm font-bold hover:underline cursor-pointer">
-                        Voir menu
-                    </button>
+                    <span>max {restaurant.maxDeliveryTime} min</span>
                 </div>
             </div>
         </div>

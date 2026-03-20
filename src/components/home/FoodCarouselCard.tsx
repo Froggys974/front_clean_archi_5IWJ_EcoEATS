@@ -2,6 +2,7 @@ import React from 'react';
 import { FoodWithRelations } from "@/types/food";
 import { MapPinIcon } from "@/components/icons";
 import { H3 } from "@/components/ui/Typography";
+import Button from "@/components/ui/Button";
 
 interface FoodCarouselCardProps {
     food: FoodWithRelations;
@@ -9,7 +10,7 @@ interface FoodCarouselCardProps {
 
 export default function FoodCarouselCard({ food }: FoodCarouselCardProps) {
     return (
-        <div className="flex flex-col bg-white ounded-md border border-stone-100 overflow-hidden group/card transition-all">
+        <div className="flex flex-col bg-white ounded-md border border-stone-100 overflow-hidden group/card transition-all h-full">
             <div className="relative aspect-4/3 w-full overflow-hidden">
                 <img 
                     src={food.image} 
@@ -25,9 +26,9 @@ export default function FoodCarouselCard({ food }: FoodCarouselCardProps) {
                 </div>
 
                 <div className="mt-auto">
-                    <button className="cursor-pointer w-full flex items-center justify-center bg-accent text-white px-2 py-2.5 rounded-md font-semibold transition-colors hover:bg-accent/90 group/btn">
+                    <Button variant="accent" fullWidth className="rounded-none">
                         Commander maintenant
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

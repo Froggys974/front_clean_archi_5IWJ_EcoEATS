@@ -12,11 +12,14 @@ interface HighlightedRestaurantsProps {
 
 export default function HighlightedRestaurants({ title, restaurants }: HighlightedRestaurantsProps) {
     return (
-        <SectionGrid
-            title={title}
-            items={restaurants}
-            keyExtractor={(restaurant) => restaurant.id}
-            renderItem={(restaurant) => <RestaurantCard restaurant={restaurant} />}
-        />
+        <>
+            <SectionGrid
+                title={title}
+                items={restaurants}
+                keyExtractor={(restaurant) => restaurant.id}
+                renderItem={(restaurant) => <RestaurantCard restaurant={restaurant} />}
+            />
+        </>
+
     );
 }
