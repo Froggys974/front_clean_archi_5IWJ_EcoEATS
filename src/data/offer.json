@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "discountPercent": 10,
+    "startDate": "2026-01-01T00:00:00Z",
+    "endDate": "2026-09-30T23:59:59Z"
+  },
+  {
+    "id": 2,
+    "discountPercent": 15,
+    "startDate": "2026-03-10T00:00:00Z",
+    "endDate": "2026-04-20T23:59:59Z"
+  },
+  {
+    "id": 3,
+    "discountPercent": 20,
+    "startDate": "2026-03-10T00:00:00Z",
+    "endDate": "2026-04-20T23:59:59Z"
+  },
+  {
+    "id": 4,
+    "discountPercent": 5,
+    "startDate": "2026-03-10T00:00:00Z",
+    "endDate": "2026-04-20T23:59:59Z"
+  },
+  {
+    "id": 5,
+    "discountPercent": 25,
+    "startDate": "2026-03-10T00:00:00Z",
+    "endDate": "2026-04-20T23:59:59Z"
+  }
+]

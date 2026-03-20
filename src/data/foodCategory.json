@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Italian",
+    "description": "Pizza, pasta and traditional Italian dishes",
+    "visual": "https://picsum.photos/400/300?random=10"
+  },
+  {
+    "id": 2,
+    "name": "International",
+    "description": "World cuisine like sushi and tacos",
+    "visual": "https://picsum.photos/400/300?random=11"
+  },
+  {
+    "id": 3,
+    "name": "Salads",
+    "description": "Fresh and healthy salads",
+    "visual": "https://picsum.photos/400/300?random=12"
+  },
+  {
+    "id": 4,
+    "name": "Fast Food",
+    "description": "Burgers, sandwiches and grilled items",
+    "visual": "https://picsum.photos/400/300?random=13"
+  },
+  {
+    "id": 5,
+    "name": "Desserts",
+    "description": "Sweet treats and cakes",
+    "visual": "https://picsum.photos/400/300?random=14"
+  },
+    {
+        "id": 6,
+        "name": "Vegan",
+        "description": "Plant-based meals and dishes",
+        "visual": "https://picsum.photos/400/300?random=15"
+    },
+    {
+        "id": 7,
+        "name": "Gluten-Free",
+        "description": "Meals without gluten for dietary needs",
+        "visual": "https://picsum.photos/400/300?random=16"
+    },
+    {
+        "id": 8,
+        "name": "Seafood",
+        "description": "Fresh fish and seafood dishes",
+        "visual": "https://picsum.photos/400/300?random=17"
+    }
+]
