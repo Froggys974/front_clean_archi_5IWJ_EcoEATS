@@ -11,7 +11,7 @@ type HeaderProps = {
 export default function Header({title, subtitle}: HeaderProps) {
     return (
         <header className="relative w-full h-164 mt-18" style={{ background: 'linear-gradient(to bottom, var(--primary) 0%, var(--primary) 75%, var(--accent) 100%)' }}>
-            <div className="max-w-7xl h-full flex flex-col gap-4 justify-center">
+            <div className="max-w-7xl mx-auto w-full h-full flex flex-col gap-4 justify-center relative">
                 <div className="ml-55 h-full flex flex-col gap-4 justify-center">
                     <H1 title={title}>{title}</H1>
                     <p className="text-xl" >{subtitle}</p>

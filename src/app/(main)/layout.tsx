@@ -1,6 +1,8 @@
 "use client";
 
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { CartProvider } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
 export default function MainLayout({
@@ -19,10 +21,11 @@ export default function MainLayout({
   }
 
   return (
-    <>
+    <CartProvider>
       <Navigation />
       {children}
-    </>
+      <Footer />
+    </CartProvider>
   );
 }
 

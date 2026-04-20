@@ -10,7 +10,7 @@ interface FoodCarouselCardProps {
 
 export default function FoodCarouselCard({ food }: FoodCarouselCardProps) {
     return (
-        <div className="flex flex-col bg-white ounded-md border border-stone-100 overflow-hidden group/card transition-all h-full">
+        <div className="flex flex-col bg-white rounded-md border border-stone-100 overflow-hidden group/card transition-all h-full">
             <div className="relative aspect-4/3 w-full overflow-hidden">
                 <img 
                     src={food.image} 

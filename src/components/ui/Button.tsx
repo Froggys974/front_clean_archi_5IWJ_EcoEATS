@@ -29,6 +29,7 @@ interface ButtonProps {
     className?: string;
     fullWidth?: boolean;
     size?: "sm" | "md" | "lg";
+    disabled?: boolean;
 }
 
 const variantClasses = {
@@ -72,6 +73,7 @@ export default function Button({
     className = "",
     fullWidth = false,
     size = "md",
+    disabled = false,
 }: ButtonProps) {
     const baseClasses = "inline-flex items-center justify-center font-semibold transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed";
     
@@ -124,7 +126,7 @@ export default function Button({
     }
 
     return (
-        <button onClick={onClick} className={combinedClasses} style={style}>
+        <button onClick={onClick} className={combinedClasses} style={style} disabled={disabled}>
             {content}
         </button>
     );

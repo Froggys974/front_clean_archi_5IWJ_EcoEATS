@@ -66,8 +66,8 @@ export default function ApplicationOnTheWay() {
                         <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-md text-accent">
                             <AppleStoreIcon size={35} />
                             <div className="flex flex-col text-black" >
-                                <small className="text-md" >Get it on</small>
-                                <span className="font-bold text-lg" >Google Play</span>
+                                <small className="text-md" >Download on the</small>
+                                <span className="font-bold text-lg" >App Store</span>
                             </div>
                         </div>
                     </div>

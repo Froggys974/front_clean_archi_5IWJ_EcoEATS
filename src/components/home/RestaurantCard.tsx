@@ -1,6 +1,6 @@
 import React from 'react';
+import Link from "next/link";
 import { Place } from "@/types/food";
-import { ScooterIcon, UserIcon } from "@/components/icons";
 import { H3 } from "@/components/ui/Typography";
 import Button from "@/components/ui/Button";
 
@@ -68,6 +68,14 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                     <span>{open ? 'Ouvert' : 'Fermé'}</span>
                     <span>•</span>
                     <span>max {restaurant.maxDeliveryTime} min</span>
+                </div>
+
+                <div className="mt-auto">
+                    <Link href={`/restaurant/${restaurant.id}`}>
+                        <Button variant="accent" fullWidth className="rounded-none" disabled={!open}>
+                            {open ? 'Commander' : 'Fermé'}
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>

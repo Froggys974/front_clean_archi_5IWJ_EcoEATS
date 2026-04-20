@@ -7,7 +7,6 @@ export interface FoodCardType {
 }
 
 export interface FoodItem {
-    popular: unknown;
     id: number;
     name: string;
     description: string;
@@ -18,6 +17,8 @@ export interface FoodItem {
     categoryId: number;
     placeId: number;
     popular?: boolean;
+    allergens?: string[];
+    dailyStock?: number;
 }
 
 export interface Offer {

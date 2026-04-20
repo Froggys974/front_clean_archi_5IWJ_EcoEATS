@@ -9,6 +9,8 @@ import offerData from "@/data/offer.json";
 import placeData from "@/data/place.json";
 import { FoodItem, Offer, FoodWithRelations, Place } from "@/types/food";
 import SearchPerFood from "@/components/home/SearchPerFood";
+import BestOffersSection from "@/components/home/BestOffersSection";
+import ReadyToOrder from "@/components/home/ReadyToOrder";
 import ApplicationOnTheWay from "@/components/home/ApplicationOnTheWay";
 
 export default function Home() {
@@ -67,6 +69,8 @@ export default function Home() {
                 <HighlightedRestaurants title="Restaurants mis en avant" restaurants={highlightedRestaurants} />
                 <SearchPerFood title="Recherche par nourriture" />
                 <ApplicationOnTheWay />
+                <BestOffersSection />
+                <ReadyToOrder />
             </main>
         </div>
     );
