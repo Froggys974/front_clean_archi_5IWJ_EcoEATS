@@ -1,0 +1,541 @@
+[
+  {
+    "id": 1,
+    "name": "Luigi’s Kitchen",
+    "address": "12 Food Street",
+    "city": "Paris",
+    "rating": 4.5,
+    "image": "https://picsum.photos/400/300?random=1",
+    "url": "https://example.com/places/luigis_kitchen",
+    "maxDeliveryTime": 30,
+    "highlighted": true,
+    "isFast": true,
+    "offer": "10% de réduction",
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 5,
+        "open": "12:00",
+        "close": "23:00"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "ownerId": "demo-owner-1"
+  },
+  {
+    "id": 2,
+    "name": "Sushi World",
+    "address": "34 Ocean Avenue",
+    "city": "Tokyo",
+    "rating": 4.8,
+    "image": "https://picsum.photos/400/300?random=2",
+    "url": "https://example.com/places/sushi_world",
+    "maxDeliveryTime": 25,
+    "highlighted": true,
+    "isFast": true,
+    "offer": "Frais de livraison offerts",
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 1,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 2,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 3,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 4,
+        "open": "12:00",
+        "close": "23:00"
+      },
+      {
+        "day": 5,
+        "open": "13:00",
+        "close": "23:00"
+      },
+      {
+        "day": 6,
+        "open": "13:00",
+        "close": "21:00"
+      }
+    ],
+    "ownerId": "demo-owner-2"
+  },
+  {
+    "id": 3,
+    "name": "Green Salad Bar",
+    "address": "56 Healthy Lane",
+    "city": "New York",
+    "rating": 4.2,
+    "image": "https://picsum.photos/400/300?random=3",
+    "url": "https://example.com/places/green_salad_bar",
+    "maxDeliveryTime": 20,
+    "highlighted": true,
+    "isFast": true,
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 1,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 2,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 3,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 4,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "21:00"
+      },
+      {
+        "day": 6,
+        "open": "11:00",
+        "close": "19:00"
+      }
+    ],
+    "ownerId": "demo-owner-3"
+  },
+  {
+    "id": 4,
+    "name": "Burger Palace",
+    "address": "78 Grill Street",
+    "city": "Paris",
+    "rating": 4.6,
+    "image": "https://picsum.photos/400/300?random=4",
+    "url": "https://example.com/places/burger_palace",
+    "maxDeliveryTime": 35,
+    "highlighted": true,
+    "isFast": false,
+    "offer": "1 acheté = 1 offert",
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "ownerId": "demo-owner-4"
+  },
+  {
+    "id": 5,
+    "name": "Pasta Bene",
+    "address": "5 Via Roma",
+    "city": "Paris",
+    "rating": 4.3,
+    "image": "https://picsum.photos/400/300?random=5",
+    "url": "https://example.com/places/pasta_bene",
+    "maxDeliveryTime": 30,
+    "highlighted": false,
+    "isFast": false,
+    "offer": null,
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 1,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 2,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 3,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 4,
+        "open": "11:30",
+        "close": "23:30"
+      },
+      {
+        "day": 5,
+        "open": "11:30",
+        "close": "23:30"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "21:30"
+      }
+    ],
+    "ownerId": "demo-owner-5"
+  },
+  {
+    "id": 6,
+    "name": "Wok n Roll",
+    "address": "22 Dragon Way",
+    "city": "Paris",
+    "rating": 4.7,
+    "image": "https://picsum.photos/400/300?random=6",
+    "url": "https://example.com/places/wok_n_roll",
+    "maxDeliveryTime": 25,
+    "highlighted": false,
+    "isFast": true,
+    "offer": "-5€ dès 30€",
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 6,
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "ownerId": "demo-owner-6"
+  },
+  {
+    "id": 7,
+    "name": "Taco Fiesta",
+    "address": "15 Sombrero Lane",
+    "city": "Paris",
+    "rating": 4.1,
+    "image": "https://picsum.photos/400/300?random=7",
+    "url": "https://example.com/places/taco_fiesta",
+    "maxDeliveryTime": 20,
+    "highlighted": true,
+    "isFast": true,
+    "offer": null,
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 1,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 2,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 3,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 4,
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": 5,
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": 6,
+        "open": "11:00",
+        "close": "20:00"
+      }
+    ],
+    "ownerId": "demo-owner-7"
+  },
+  {
+    "id": 8,
+    "name": "The Healthy Bowl",
+    "address": "9 Leafy Road",
+    "city": "Paris",
+    "rating": 4.5,
+    "image": "https://picsum.photos/400/300?random=8",
+    "url": "https://example.com/places/healthy_bowl",
+    "maxDeliveryTime": 30,
+    "highlighted": false,
+    "isFast": true,
+    "offer": null,
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 1,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 2,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 3,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 4,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 5,
+        "open": "10:00",
+        "close": "18:00"
+      },
+      {
+        "day": 6,
+        "open": "10:00",
+        "close": "18:00"
+      }
+    ],
+    "ownerId": "demo-owner-8"
+  },
+  {
+    "id": 9,
+    "name": "Pizza Express",
+    "address": "42 Crusty Blvd",
+    "city": "Paris",
+    "rating": 4.2,
+    "image": "https://picsum.photos/400/300?random=9",
+    "url": "https://example.com/places/pizza_express",
+    "maxDeliveryTime": 20,
+    "highlighted": false,
+    "isFast": true,
+    "offer": "Livraison gratuite",
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "ownerId": "demo-owner-9"
+  },
+  {
+    "id": 10,
+    "name": "Le Coq d'Or",
+    "address": "1 Gastronomy Plaza",
+    "city": "Paris",
+    "rating": 4.9,
+    "image": "https://picsum.photos/400/300?random=10",
+    "url": "https://example.com/places/le_coq_dor",
+    "maxDeliveryTime": 45,
+    "highlighted": false,
+    "isFast": false,
+    "offer": null,
+    "OpeningHours": [
+      {
+        "day": 0,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 0,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 1,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 1,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 2,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 2,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 3,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 3,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 4,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 4,
+        "open": "19:00",
+        "close": "23:30"
+      },
+      {
+        "day": 5,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 5,
+        "open": "19:00",
+        "close": "23:30"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "15:00"
+      }
+    ],
+    "ownerId": "demo-owner-10"
+  }
+]
