@@ -28,7 +28,12 @@ export default function LoginPage() {
 
       if (response.token) {
         login(response.token);
-        router.push('/');
+        const base64 = response.token.split('.')[1]?.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = base64 ? JSON.parse(atob(base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '='))) : {};
+        const roles: string[] = payload.roles || [];
+        if (roles.includes('restaurateur')) router.push('/dashboard/restaurant');
+        else if (roles.includes('courier')) router.push('/dashboard/courier');
+        else router.push('/');
       }
     } catch (err: any) {
       setError(err.message || 'Identifiants invalides');

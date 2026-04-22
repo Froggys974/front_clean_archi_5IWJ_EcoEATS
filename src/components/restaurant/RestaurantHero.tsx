@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Place, OpeningHour } from "@/types/food";
-import { MapPinIcon, ScooterIcon } from "@/components/icons";
+import { MapPinIcon, ScooterIcon, LightningIcon } from "@/components/icons";
 
 const DAY_NAMES = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
 
@@ -43,21 +43,22 @@ export default function RestaurantHero({ restaurant }: RestaurantHeroProps) {
                     alt={restaurant.name}
                     className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
                 {/* Back link */}
                 <Link
                     href="/"
-                    className="absolute top-6 left-6 flex items-center gap-2 bg-white/90 backdrop-blur-sm text-stone-800 text-sm font-semibold px-4 py-2 rounded-full hover:bg-white transition-colors"
+                    className="mt-15 absolute top-6 left-6 flex items-center gap-2 bg-white/90 backdrop-blur-sm text-stone-800 text-sm font-semibold px-4 py-2 rounded-full hover:bg-white transition-colors"
                 >
                     ← Retour
                 </Link>
 
                 {/* Badges */}
-                <div className="absolute top-6 right-6 flex gap-2">
+                <div className="absolute bottom-4 right-6 flex gap-2">
                     {restaurant.isFast && (
-                        <span className="bg-primary text-black text-xs font-bold px-3 py-1.5 rounded-full">
-                            ⚡ Livraison rapide
+                        <span className="bg-primary text-stone-900 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                            <LightningIcon size={12} />
+                            Livraison rapide
                         </span>
                     )}
                     {restaurant.offer && (
@@ -81,7 +82,7 @@ export default function RestaurantHero({ restaurant }: RestaurantHeroProps) {
                             <ScooterIcon size={16} />
                             max {restaurant.maxDeliveryTime} min
                         </span>
-                        <span className="flex items-center gap-1.5">
+                        <span className="flex items-center gap-1 font-semibold">
                             <span className="text-yellow-400">★</span>
                             {restaurant.rating}
                         </span>
@@ -93,17 +94,19 @@ export default function RestaurantHero({ restaurant }: RestaurantHeroProps) {
             <div className="w-full bg-white border-b border-stone-100 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className={`w-2.5 h-2.5 rounded-full ${open ? "bg-green-500" : "bg-red-500"}`} />
-                        <span className="text-sm font-semibold">{open ? "Ouvert" : "Fermé"}</span>
+                        <div className={`w-2.5 h-2.5 rounded-full ${open ? "bg-green-500" : "bg-red-400"}`} />
+                        <span className="text-sm font-semibold text-stone-800">
+                            {open ? "Ouvert" : "Fermé"}
+                        </span>
                         <span className="text-stone-400 text-sm">— {todaySlots}</span>
                     </div>
 
                     {restaurant.OpeningHours && restaurant.OpeningHours.length > 0 && (
-                        <details className="text-sm">
-                            <summary className="cursor-pointer text-accent hover:underline select-none">
+                        <details className="relative text-sm">
+                            <summary className="cursor-pointer text-accent hover:underline select-none list-none">
                                 Voir tous les horaires
                             </summary>
-                            <div className="absolute z-20 mt-2 bg-white border border-stone-100 rounded-xl shadow-lg p-4 grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+                            <div className="absolute z-20 top-full mt-2 left-0 bg-white border border-stone-100 rounded-xl shadow-lg p-4 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm min-w-[16rem]">
                                 {DAY_NAMES.map((day, idx) => {
                                     const slots = restaurant.OpeningHours!.filter((h) => h.day === idx);
                                     return (

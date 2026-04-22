@@ -34,18 +34,22 @@ const foodWithActiveOffers: FoodWithActiveOffer[] = foods
     .filter((item): item is FoodWithActiveOffer => item !== null);
 
 export default function FoodPromotionBanner() {
+    if (foodWithActiveOffers.length === 0) return null;
+
     return (
-        <div className="w-full flex flex-wrap gap-8 p-4 justify-center mx-auto">
-            {foodWithActiveOffers.map((item) => (
-                <FoodCard
-                    key={item.id}
-                    visual={item.image}
-                    offer={item.offer.discountPercent}
-                    name={item.name}
-                    remainingDays={item.remainingDays}
-                    url={item.url}
-                />
-            ))}
+        <div className="w-full max-w-7xl mx-auto px-4">
+            <div className="flex flex-wrap gap-6 justify-center">
+                {foodWithActiveOffers.map((item) => (
+                    <FoodCard
+                        key={item.id}
+                        visual={item.image}
+                        offer={item.offer.discountPercent}
+                        name={item.name}
+                        remainingDays={item.remainingDays}
+                        url={item.url}
+                    />
+                ))}
+            </div>
         </div>
-    )
+    );
 }

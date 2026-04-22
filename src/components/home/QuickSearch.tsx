@@ -34,31 +34,32 @@ export default function QuickSearch() {
                         onClick={() => setSelectedOption(option.value)}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-semibold cursor-pointer ${
                             selectedOption === option.value
-                                ? "bg-[#FFF2EB] text-[#FF6B35]"
-                                : "text-[#7B7B7B] hover:bg-gray-50"
+                                ? "bg-accent/10 text-accent"
+                                : "text-stone-500 hover:bg-stone-50"
                         }`}
                     >
-                        <span>
-                            {option.icon}
-                        </span>
+                        <span>{option.icon}</span>
                         {option.name}
                     </button>
                 ))}
             </div>
 
-            <div className="h-px bg-gray-100 w-full" />
+            <div className="h-px bg-stone-100 w-full" />
 
             <div className="flex flex-col md:flex-row items-center gap-4 p-6">
-                <div className="flex-1 flex items-center gap-3 bg-[#F7F7F7] rounded-xl px-4 py-3.5 w-full">
+                <div className="flex-1 flex items-center gap-3 bg-stone-100 rounded-xl px-4 py-3.5 w-full">
                     <MapPinIcon size={24} />
                     <input
                         type="text"
                         placeholder="Entrez votre adresse"
-                        className="bg-transparent border-none outline-none  placeholder:text-[#ADADAD] w-full text-lg"
+                        className="bg-transparent border-none outline-none placeholder:text-stone-400 w-full text-lg"
                     />
                 </div>
-                
-                <button className="cursor-pointer bg-linear-to-r from-[#FF7E5F] to-[#FF6B35] text-white px-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 w-full md:w-auto hover:shadow-lg transition-shadow">
+
+                <button
+                    className="cursor-pointer text-white px-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 w-full md:w-auto hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
+                    style={{ background: 'linear-gradient(to right, var(--primary), var(--accent))' }}
+                >
                     <SearchIcon size={20} />
                     Je cherche
                 </button>

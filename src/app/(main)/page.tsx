@@ -60,19 +60,17 @@ export default function Home() {
     ];
 
     return (
-        <div className="flex min-h-screen items-center justify-center font-sans">
-            <main className="flex min-h-screen w-full flex-col items-center justify-between sm:items-start gap-20">
-                <Header title="Une petite faim ?" subtitle="En quelques clics, trouvez des repas proches de chez vous"/>
-                <FoodPromotionBanner />
-                <IconExplanationSection title="Comment ça marche ?" sections={sections} gradient={true} />
-                <FoodCarousel title="Populaires" foods={carouselFoods} />
-                <HighlightedRestaurants title="Restaurants mis en avant" restaurants={highlightedRestaurants} />
-                <SearchPerFood title="Recherche par nourriture" />
-                <ApplicationOnTheWay />
-                <BestOffersSection />
-                <ReadyToOrder />
-            </main>
-        </div>
+        <main className="flex w-full flex-col gap-16">
+            <Header title="Une petite faim ?" subtitle="En quelques clics, trouvez des repas proches de chez vous" />
+            <FoodPromotionBanner />
+            <IconExplanationSection title="Comment ça marche ?" sections={sections} gradient={true} />
+            <FoodCarousel title="Populaires" foods={carouselFoods} />
+            <HighlightedRestaurants title="Restaurants mis en avant" restaurants={highlightedRestaurants} />
+            <SearchPerFood title="Recherche par nourriture" />
+            <ApplicationOnTheWay />
+            <BestOffersSection />
+            <ReadyToOrder />
+        </main>
     );
 }
 

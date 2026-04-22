@@ -203,6 +203,74 @@ export const AppleStoreIcon = (props: IconProps) => (
     </Icon>
 )
 
+export const LightningIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M13 2L4 14H11L10 22L20 10H13L13 2Z" fill="currentColor" />
+    </Icon>
+);
+
+export const StarIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor" />
+    </Icon>
+);
+
+export const CheckIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Icon>
+);
+
+export const MenuIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </Icon>
+);
+
+export const XIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </Icon>
+);
+
+export const ClockIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </Icon>
+);
+
+export const TruckIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M14 4H2V16H14V4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M14 8H18L22 12V16H14V8Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="6" cy="18" r="2" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="18" cy="18" r="2" stroke="currentColor" strokeWidth="1.5" />
+    </Icon>
+);
+
+export const CreditCardIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M2 10H22" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M6 15H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </Icon>
+);
+
+export const WalletIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <path d="M22 12V17C22 19.2091 20.2091 21 18 21H6C3.79086 21 2 19.2091 2 17V7C2 4.79086 3.79086 3 6 3H18C20.2091 3 22 4.79086 22 7V8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17 14.5C16.1716 14.5 15.5 13.8284 15.5 13C15.5 12.1716 16.1716 11.5 17 11.5C17.8284 11.5 18.5 12.1716 18.5 13C18.5 13.8284 17.8284 14.5 17 14.5Z" fill="currentColor" />
+    </Icon>
+);
+
+export const ToggleIcon = (props: IconProps) => (
+    <Icon {...props} viewBox="0 0 24 24">
+        <rect x="2" y="7" width="20" height="10" rx="5" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="7" cy="12" r="3" fill="currentColor" />
+    </Icon>
+);
+
 export const CartIcon = (props: IconProps) => (
     <Icon {...props} viewBox="0 0 24 24">
         <path
@@ -225,6 +293,8 @@ export const CartIcon = (props: IconProps) => (
 );
 
 export const Icons = {
+    Wallet: WalletIcon,
+    Toggle: ToggleIcon,
     Cart: CartIcon,
     Window: WindowIcon,
     File: FileIcon,
@@ -245,7 +315,15 @@ export const Icons = {
     Payment: PaymentIcon,
     Donut: DonutIcon,
     GooglePlay: GooglePlayIcon,
-    AppleStore: AppleStoreIcon
+    AppleStore: AppleStoreIcon,
+    Lightning: LightningIcon,
+    Star: StarIcon,
+    Check: CheckIcon,
+    Menu: MenuIcon,
+    X: XIcon,
+    Clock: ClockIcon,
+    Truck: TruckIcon,
+    CreditCard: CreditCardIcon,
 };
 
 export type IconName = keyof typeof Icons;

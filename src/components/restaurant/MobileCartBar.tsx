@@ -42,7 +42,7 @@ export default function MobileCartBar() {
                             </button>
                         </div>
                         <div className="p-4">
-                            <RestaurantCart />
+                            <RestaurantCart onCheckout={() => setOpen(false)} />
                         </div>
                     </div>
                 </div>

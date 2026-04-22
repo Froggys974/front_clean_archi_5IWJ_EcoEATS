@@ -53,6 +53,7 @@ export interface Place {
     isFast?: boolean;
     offer?: string;
     OpeningHours?: OpeningHour[];
+    ownerId?: string;
 }
 
 export interface FoodWithRelations extends FoodItem {

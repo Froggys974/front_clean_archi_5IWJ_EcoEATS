@@ -42,7 +42,7 @@ export default function Footer() {
                     </div>
 
                     <div>
-                        <h3 className="text-white font-semibold mb-3 text-sm uppercase tracking-wider">Villes desservies</h3>
+                        <h3 className="text-white font-semibold mb-3 text-sm uppercase tracking-wider">Villes PARTENAIRES</h3>
                         <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5">
                             {cities.map((city) => (
                                 <li key={city}>

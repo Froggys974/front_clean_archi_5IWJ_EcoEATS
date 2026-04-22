@@ -9,17 +9,46 @@
     "url": "https://example.com/places/luigis_kitchen",
     "maxDeliveryTime": 30,
     "highlighted": true,
-    "isFast": false,
+    "isFast": true,
     "offer": "10% de réduction",
     "OpeningHours": [
-      { "day": 0, "open": "11:00", "close": "22:00" },
-      { "day": 1, "open": "11:00", "close": "22:00" },
-      { "day": 2, "open": "11:00", "close": "22:00" },
-      { "day": 3, "open": "11:00", "close": "22:00" },
-      { "day": 4, "open": "11:00", "close": "23:00" },
-      { "day": 5, "open": "12:00", "close": "23:00" },
-      { "day": 6, "open": "12:00", "close": "21:00" }
-    ]
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 5,
+        "open": "12:00",
+        "close": "23:00"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "21:00"
+      }
+    ],
+    "ownerId": "demo-owner-1"
   },
   {
     "id": 2,
@@ -34,14 +63,43 @@
     "isFast": true,
     "offer": "Frais de livraison offerts",
     "OpeningHours": [
-      { "day": 0, "open": "12:00", "close": "22:00" },
-      { "day": 1, "open": "12:00", "close": "22:00" },
-      { "day": 2, "open": "12:00", "close": "22:00" },
-      { "day": 3, "open": "12:00", "close": "22:00" },
-      { "day": 4, "open": "12:00", "close": "23:00" },
-      { "day": 5, "open": "13:00", "close": "23:00" },
-      { "day": 6, "open": "13:00", "close": "21:00" }
-    ]
+      {
+        "day": 0,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 1,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 2,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 3,
+        "open": "12:00",
+        "close": "22:00"
+      },
+      {
+        "day": 4,
+        "open": "12:00",
+        "close": "23:00"
+      },
+      {
+        "day": 5,
+        "open": "13:00",
+        "close": "23:00"
+      },
+      {
+        "day": 6,
+        "open": "13:00",
+        "close": "21:00"
+      }
+    ],
+    "ownerId": "demo-owner-2"
   },
   {
     "id": 3,
@@ -55,14 +113,43 @@
     "highlighted": true,
     "isFast": true,
     "OpeningHours": [
-      { "day": 0, "open": "10:00", "close": "20:00" },
-      { "day": 1, "open": "10:00", "close": "20:00" },
-      { "day": 2, "open": "10:00", "close": "20:00" },
-      { "day": 3, "open": "10:00", "close": "20:00" },
-      { "day": 4, "open": "10:00", "close": "21:00" },
-      { "day": 5, "open": "11:00", "close": "21:00" },
-      { "day": 6, "open": "11:00", "close": "19:00" }
-    ]
+      {
+        "day": 0,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 1,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 2,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 3,
+        "open": "10:00",
+        "close": "20:00"
+      },
+      {
+        "day": 4,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "21:00"
+      },
+      {
+        "day": 6,
+        "open": "11:00",
+        "close": "19:00"
+      }
+    ],
+    "ownerId": "demo-owner-3"
   },
   {
     "id": 4,
@@ -77,14 +164,43 @@
     "isFast": false,
     "offer": "1 acheté = 1 offert",
     "OpeningHours": [
-      { "day": 0, "open": "11:00", "close": "23:00" },
-      { "day": 1, "open": "11:00", "close": "23:00" },
-      { "day": 2, "open": "11:00", "close": "23:00" },
-      { "day": 3, "open": "11:00", "close": "23:00" },
-      { "day": 4, "open": "11:00", "close": "00:00" },
-      { "day": 5, "open": "11:00", "close": "00:00" },
-      { "day": 6, "open": "12:00", "close": "22:00" }
-    ]
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "ownerId": "demo-owner-4"
   },
   {
     "id": 5,
@@ -99,14 +215,43 @@
     "isFast": false,
     "offer": null,
     "OpeningHours": [
-      { "day": 0, "open": "11:30", "close": "22:30" },
-      { "day": 1, "open": "11:30", "close": "22:30" },
-      { "day": 2, "open": "11:30", "close": "22:30" },
-      { "day": 3, "open": "11:30", "close": "22:30" },
-      { "day": 4, "open": "11:30", "close": "23:30" },
-      { "day": 5, "open": "11:30", "close": "23:30" },
-      { "day": 6, "open": "12:00", "close": "21:30" }
-    ]
+      {
+        "day": 0,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 1,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 2,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 3,
+        "open": "11:30",
+        "close": "22:30"
+      },
+      {
+        "day": 4,
+        "open": "11:30",
+        "close": "23:30"
+      },
+      {
+        "day": 5,
+        "open": "11:30",
+        "close": "23:30"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "21:30"
+      }
+    ],
+    "ownerId": "demo-owner-5"
   },
   {
     "id": 6,
@@ -121,14 +266,43 @@
     "isFast": true,
     "offer": "-5€ dès 30€",
     "OpeningHours": [
-      { "day": 0, "open": "11:00", "close": "22:00" },
-      { "day": 1, "open": "11:00", "close": "22:00" },
-      { "day": 2, "open": "11:00", "close": "22:00" },
-      { "day": 3, "open": "11:00", "close": "22:00" },
-      { "day": 4, "open": "11:00", "close": "22:00" },
-      { "day": 5, "open": "11:00", "close": "22:00" },
-      { "day": 6, "open": "11:00", "close": "22:00" }
-    ]
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "22:00"
+      },
+      {
+        "day": 6,
+        "open": "11:00",
+        "close": "22:00"
+      }
+    ],
+    "ownerId": "demo-owner-6"
   },
   {
     "id": 7,
@@ -143,14 +317,43 @@
     "isFast": true,
     "offer": null,
     "OpeningHours": [
-      { "day": 0, "open": "10:00", "close": "21:00" },
-      { "day": 1, "open": "10:00", "close": "21:00" },
-      { "day": 2, "open": "10:00", "close": "21:00" },
-      { "day": 3, "open": "10:00", "close": "21:00" },
-      { "day": 4, "open": "10:00", "close": "22:00" },
-      { "day": 5, "open": "10:00", "close": "22:00" },
-      { "day": 6, "open": "11:00", "close": "20:00" }
-    ]
+      {
+        "day": 0,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 1,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 2,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 3,
+        "open": "10:00",
+        "close": "21:00"
+      },
+      {
+        "day": 4,
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": 5,
+        "open": "10:00",
+        "close": "22:00"
+      },
+      {
+        "day": 6,
+        "open": "11:00",
+        "close": "20:00"
+      }
+    ],
+    "ownerId": "demo-owner-7"
   },
   {
     "id": 8,
@@ -165,14 +368,43 @@
     "isFast": true,
     "offer": null,
     "OpeningHours": [
-      { "day": 0, "open": "09:00", "close": "20:00" },
-      { "day": 1, "open": "09:00", "close": "20:00" },
-      { "day": 2, "open": "09:00", "close": "20:00" },
-      { "day": 3, "open": "09:00", "close": "20:00" },
-      { "day": 4, "open": "09:00", "close": "20:00" },
-      { "day": 5, "open": "10:00", "close": "18:00" },
-      { "day": 6, "open": "10:00", "close": "18:00" }
-    ]
+      {
+        "day": 0,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 1,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 2,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 3,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 4,
+        "open": "09:00",
+        "close": "20:00"
+      },
+      {
+        "day": 5,
+        "open": "10:00",
+        "close": "18:00"
+      },
+      {
+        "day": 6,
+        "open": "10:00",
+        "close": "18:00"
+      }
+    ],
+    "ownerId": "demo-owner-8"
   },
   {
     "id": 9,
@@ -187,14 +419,43 @@
     "isFast": true,
     "offer": "Livraison gratuite",
     "OpeningHours": [
-      { "day": 0, "open": "11:00", "close": "23:00" },
-      { "day": 1, "open": "11:00", "close": "23:00" },
-      { "day": 2, "open": "11:00", "close": "23:00" },
-      { "day": 3, "open": "11:00", "close": "23:00" },
-      { "day": 4, "open": "11:00", "close": "00:00" },
-      { "day": 5, "open": "11:00", "close": "00:00" },
-      { "day": 6, "open": "12:00", "close": "22:00" }
-    ]
+      {
+        "day": 0,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 1,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 2,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 3,
+        "open": "11:00",
+        "close": "23:00"
+      },
+      {
+        "day": 4,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 5,
+        "open": "11:00",
+        "close": "00:00"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "22:00"
+      }
+    ],
+    "ownerId": "demo-owner-9"
   },
   {
     "id": 10,
@@ -209,19 +470,72 @@
     "isFast": false,
     "offer": null,
     "OpeningHours": [
-      { "day": 0, "open": "12:00", "close": "15:00" },
-      { "day": 0, "open": "19:00", "close": "22:30" },
-      { "day": 1, "open": "12:00", "close": "15:00" },
-      { "day": 1, "open": "19:00", "close": "22:30" },
-      { "day": 2, "open": "12:00", "close": "15:00" },
-      { "day": 2, "open": "19:00", "close": "22:30" },
-      { "day": 3, "open": "12:00", "close": "15:00" },
-      { "day": 3, "open": "19:00", "close": "22:30" },
-      { "day": 4, "open": "12:00", "close": "15:00" },
-      { "day": 4, "open": "19:00", "close": "23:30" },
-      { "day": 5, "open": "12:00", "close": "15:00" },
-      { "day": 5, "open": "19:00", "close": "23:30" },
-      { "day": 6, "open": "12:00", "close": "15:00" }
-    ]
+      {
+        "day": 0,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 0,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 1,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 1,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 2,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 2,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 3,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 3,
+        "open": "19:00",
+        "close": "22:30"
+      },
+      {
+        "day": 4,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 4,
+        "open": "19:00",
+        "close": "23:30"
+      },
+      {
+        "day": 5,
+        "open": "12:00",
+        "close": "15:00"
+      },
+      {
+        "day": 5,
+        "open": "19:00",
+        "close": "23:30"
+      },
+      {
+        "day": 6,
+        "open": "12:00",
+        "close": "15:00"
+      }
+    ],
+    "ownerId": "demo-owner-10"
   }
 ]

@@ -1,13 +1,20 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import {CartIcon} from "@/components/icons";
+import { CartIcon } from "@/components/icons";
 
 const DELIVERY_FEE = 2.5;
 const SERVICE_FEE = 0.5;
 
-export default function RestaurantCart() {
+export default function RestaurantCart({ onCheckout }: { onCheckout?: () => void } = {}) {
     const { items, restaurantName, updateQuantity, removeItem, subtotal, totalItems } = useCart();
+    const router = useRouter();
+
+    const handleCheckout = () => {
+        onCheckout?.();
+        router.push("/checkout");
+    };
 
     if (items.length === 0) {
         return (
@@ -94,10 +101,11 @@ export default function RestaurantCart() {
             {/* CTA */}
             <div className="px-5 pb-5">
                 <button
+                    onClick={handleCheckout}
                     className="cursor-pointer w-full py-3.5 rounded-xl font-bold text-white text-base transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
                     style={{ background: "linear-gradient(to right, var(--primary), var(--accent))" }}
                 >
-                    Commander · {total.toFixed(2)}€
+                    Commander · {total.toFixed(2)} €
                 </button>
             </div>
         </div>

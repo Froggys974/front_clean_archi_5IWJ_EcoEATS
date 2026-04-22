@@ -5,6 +5,7 @@ import { FoodItem, FoodCategory } from "@/types/food";
 import { useCart } from "@/context/CartContext";
 import MenuItemCard from "./MenuItemCard";
 import CartConflictModal from "./CartConflictModal";
+import { BagIcon } from "@/components/icons";
 
 interface CategoryWithItems {
     category: FoodCategory;
@@ -50,6 +51,16 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
         );
         setConflictItem(null);
     };
+
+    if (sections.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+                <BagIcon size={48} className="text-stone-200" />
+                <p className="text-stone-500 font-medium">Aucun plat disponible pour le moment.</p>
+                <p className="text-stone-400 text-sm">Le menu de ce restaurant n'a pas encore été renseigné.</p>
+            </div>
+        );
+    }
 
     return (
         <>

@@ -11,7 +11,7 @@ export default function ReadyToOrder({
     title = "Prêt à commander avec les meilleures offres ?",
     subtitle = "Profitez de réductions exclusives chaque jour et faites-vous livrer en quelques minutes.",
     ctaLabel = "Je commence",
-    ctaHref = "/",
+    ctaHref = "/restaurants",
 }: ReadyToOrderProps) {
     return (
         <section
