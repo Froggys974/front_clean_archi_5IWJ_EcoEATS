@@ -1,27 +1,11 @@
 import React from 'react';
+import Image from "next/image";
 import { Place } from "@/types/food";
 import Button from "@/components/ui/Button";
+import { isOpenNow } from "@/utils/openingHours";
 
 interface RestaurantCardProps {
     restaurant: Place;
-}
-
-function isOpenNow(openingHours?: { day: number; open: string; close: string }[]): boolean {
-    if (!openingHours || openingHours.length === 0) return true;
-    const now = new Date();
-    const day = now.getDay();
-    const time = now.getHours() * 60 + now.getMinutes();
-    return openingHours
-        .filter((h) => h.day === day)
-        .some((h) => {
-            const [oh, om] = h.open.split(':').map(Number);
-            const [ch, cm] = h.close.split(':').map(Number);
-            const openTime = oh * 60 + om;
-            const closeTime = ch * 60 + cm;
-            return closeTime < openTime
-                ? time >= openTime || time < closeTime
-                : time >= openTime && time < closeTime;
-        });
 }
 
 export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
@@ -30,11 +14,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
     return (
         <div className="flex flex-col bg-white rounded-xl border border-stone-100 overflow-hidden group/card transition-all hover:shadow-md h-full">
             <div className="relative aspect-video w-full overflow-hidden bg-stone-100">
-                <img
-                    src={restaurant.image}
-                    alt={restaurant.name}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover/card:scale-105"
-                />
+                <Image src={restaurant.image} alt={restaurant.name} fill className="object-cover transition-transform duration-300 group-hover/card:scale-105" />
                 {restaurant.offer && (
                     <span className="absolute top-3 left-0 bg-accent text-white px-3 py-1 rounded-r-full text-xs font-bold shadow-sm">
                         {restaurant.offer}

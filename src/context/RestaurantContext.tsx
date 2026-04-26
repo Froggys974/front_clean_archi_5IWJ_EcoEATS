@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { FoodItem, Place } from "@/types/food";
 import allDishes from "@/data/food.json";
 import allPlaces from "@/data/place.json";

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FoodItem } from "@/types/food";
 
 interface MenuItemCardProps {
@@ -30,11 +31,7 @@ export default function MenuItemCard({
         >
             {/* Image */}
             <div className="relative shrink-0 w-28 h-24 rounded-lg overflow-hidden bg-stone-100">
-                <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                />
+                <Image src={item.image} alt={item.name} fill className="object-cover" />
                 {outOfStock && (
                     <div className="absolute inset-0 bg-stone-900/60 flex items-center justify-center">
                         <span className="text-white text-xs font-bold">Épuisé</span>

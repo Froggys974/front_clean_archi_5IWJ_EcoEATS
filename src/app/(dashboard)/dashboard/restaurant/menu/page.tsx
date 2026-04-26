@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRestaurant } from "@/context/RestaurantContext";
 import Modal from "@/components/ui/Modal";
 import { BagIcon } from "@/components/icons";
 
 export default function MenuPage() {
-    const { dishes, deleteDish, updateDish } = useRestaurant();
+    const { dishes, deleteDish } = useRestaurant();
     const [confirmId, setConfirmId] = useState<number | null>(null);
 
     const handleDelete = () => {
@@ -47,8 +48,8 @@ export default function MenuPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {dishes.map((dish) => (
                         <div key={dish.id} className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden flex">
-                            <div className="w-24 h-24 shrink-0 bg-stone-100 overflow-hidden">
-                                <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
+                            <div className="relative w-24 h-24 shrink-0 bg-stone-100 overflow-hidden">
+                                <Image src={dish.image} alt={dish.name} fill className="object-cover" />
                             </div>
                             <div className="flex flex-col flex-1 p-3 min-w-0">
                                 <div className="flex items-start justify-between gap-2">

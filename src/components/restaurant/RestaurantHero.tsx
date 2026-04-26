@@ -1,30 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Place, OpeningHour } from "@/types/food";
+import { Place } from "@/types/food";
 import { MapPinIcon, ScooterIcon, LightningIcon } from "@/components/icons";
-
-const DAY_NAMES = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
-
-function getTodaySlots(openingHours: OpeningHour[] = []): string {
-    const day = new Date().getDay();
-    const slots = openingHours.filter((h) => h.day === day);
-    if (slots.length === 0) return "Fermé aujourd'hui";
-    return slots.map((s) => `${s.open} – ${s.close}`).join(", ");
-}
-
-function isOpenNow(openingHours: OpeningHour[] = []): boolean {
-    const now = new Date();
-    const day = now.getDay();
-    const time = now.getHours() * 60 + now.getMinutes();
-    return openingHours
-        .filter((h) => h.day === day)
-        .some((h) => {
-            const [oh, om] = h.open.split(":").map(Number);
-            const [ch, cm] = h.close.split(":").map(Number);
-            const open = oh * 60 + om;
-            const close = ch * 60 + cm;
-            return close < open ? time >= open || time < close : time >= open && time < close;
-        });
-}
+import { isOpenNow, getTodaySlots, DAY_NAMES } from "@/utils/openingHours";
 
 interface RestaurantHeroProps {
     restaurant: Place;
@@ -38,11 +16,7 @@ export default function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <div className="w-full">
             {/* Banner image */}
             <div className="relative w-full h-72 md:h-96 overflow-hidden bg-stone-200">
-                <img
-                    src={restaurant.image}
-                    alt={restaurant.name}
-                    className="w-full h-full object-cover"
-                />
+                <Image src={restaurant.image} alt={restaurant.name} fill className="object-cover" />
                 <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
                 {/* Back link */}

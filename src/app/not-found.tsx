@@ -8,7 +8,7 @@ export default function NotFound() {
         </div>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
           <h2 className="text-2xl font-semibold mb-6">Je suis la page 404</h2>
-          <p className="text-gray-600">La page que vous cherchez n'existe pas...</p>
+          <p className="text-gray-600">La page que vous cherchez n&apos;existe pas...</p>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from "next/image";
 import { FoodWithRelations } from "@/types/food";
 import { MapPinIcon } from "@/components/icons";
 import Button from "@/components/ui/Button";
@@ -11,11 +12,7 @@ export default function FoodCarouselCard({ food }: FoodCarouselCardProps) {
     return (
         <div className="flex flex-col bg-white rounded-xl border border-stone-100 overflow-hidden group/card transition-all hover:shadow-md h-full">
             <div className="relative aspect-4/3 w-full overflow-hidden bg-stone-100">
-                <img
-                    src={food.image}
-                    alt={food.name}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover/card:scale-105"
-                />
+                <Image src={food.image} alt={food.name} fill className="object-cover transition-transform duration-300 group-hover/card:scale-105" />
                 {food.offer && food.offer.discountPercent > 0 && (
                     <span className="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2.5 py-1 rounded-full">
                         -{food.offer.discountPercent}%

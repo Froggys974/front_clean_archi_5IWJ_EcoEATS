@@ -123,7 +123,7 @@ export default function RestaurantOrdersPage() {
                             className="cursor-pointer flex-[2] py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:shadow-md"
                             style={{ background: "linear-gradient(to right, var(--primary), var(--accent))" }}
                         >
-                            Confirmer l'acceptation
+                            Confirmer l&apos;acceptation
                         </button>
                     </div>
                 </div>

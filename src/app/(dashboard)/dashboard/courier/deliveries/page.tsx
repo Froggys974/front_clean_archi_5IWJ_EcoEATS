@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import { useCourier } from "@/context/CourierContext";
-import { TruckIcon, ClockIcon, MapPinIcon } from "@/components/icons";
+import { TruckIcon, MapPinIcon } from "@/components/icons";
 
 export default function CourierDeliveriesPage() {
     const { isAvailable, pendingDeliveries, activeDelivery, history, acceptDelivery, refuseDelivery, pickupDelivery, completeDelivery } = useCourier();
     const [tab, setTab] = useState<"pending" | "active" | "history">("active");
-
-    const effectiveTab = activeDelivery ? tab : pendingDeliveries.length > 0 ? "pending" : "history";
 
     return (
         <div className="flex flex-col gap-6 max-w-3xl">

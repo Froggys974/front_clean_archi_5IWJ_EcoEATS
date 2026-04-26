@@ -19,7 +19,7 @@ interface RestaurantMenuProps {
 }
 
 export default function RestaurantMenu({ sections, restaurantId, restaurantName }: RestaurantMenuProps) {
-    const { addItem, updateQuantity, clearCart, restaurantName: cartRestaurantName, items: cartItems } = useCart();
+    const { addItem, replaceCart, updateQuantity, restaurantName: cartRestaurantName, items: cartItems } = useCart();
     const [conflictItem, setConflictItem] = useState<FoodItem | null>(null);
     const [activeCategory, setActiveCategory] = useState(sections[0]?.category.id ?? 0);
     const sectionRefs = useRef<Record<number, HTMLElement | null>>({});
@@ -43,8 +43,7 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
 
     const handleConflictConfirm = () => {
         if (!conflictItem) return;
-        clearCart();
-        addItem(
+        replaceCart(
             { foodId: conflictItem.id, name: conflictItem.name, price: conflictItem.price, image: conflictItem.image },
             restaurantId,
             restaurantName,
@@ -57,7 +56,7 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
             <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
                 <BagIcon size={48} className="text-stone-200" />
                 <p className="text-stone-500 font-medium">Aucun plat disponible pour le moment.</p>
-                <p className="text-stone-400 text-sm">Le menu de ce restaurant n'a pas encore été renseigné.</p>
+                <p className="text-stone-400 text-sm">Le menu de ce restaurant n&apos;a pas encore été renseigné.</p>
             </div>
         );
     }

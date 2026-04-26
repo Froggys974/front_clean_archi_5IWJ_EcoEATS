@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { FoodItem } from "@/types/food";
 
 const ALL_ALLERGENS = [
     "Gluten", "Crustacés", "Œufs", "Poisson", "Arachides",
@@ -19,6 +18,8 @@ export type DishFormData = {
     image: string;
 };
 
+const DEFAULT_DISH_IMAGE = "https://picsum.photos/200/150?random=237";
+
 interface DishFormProps {
     initial?: Partial<DishFormData>;
     onSubmit: (data: DishFormData) => void;
@@ -35,7 +36,7 @@ export default function DishForm({ initial, onSubmit, onCancel, submitLabel = "E
         allergens: initial?.allergens ?? [],
         dailyStock: initial?.dailyStock ?? 10,
         categoryId: initial?.categoryId ?? 1,
-        image: initial?.image ?? `https://picsum.photos/200/150?random=${Math.floor(Math.random() * 200) + 200}`,
+        image: initial?.image ?? DEFAULT_DISH_IMAGE,
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
 

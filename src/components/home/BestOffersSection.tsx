@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { H2, H3 } from "@/components/ui/Typography";
 import Button from "@/components/ui/Button";
 
@@ -60,10 +61,11 @@ export default function BestOffersSection({
                             {/* Image area — object-cover regardless of source dimensions */}
                             <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
                                 {offer.image ? (
-                                    <img
+                                    <Image
                                         src={offer.image}
                                         alt={offer.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">

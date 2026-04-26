@@ -52,7 +52,7 @@ export default function CourierDashboardPage() {
                 </div>
                 <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4 flex flex-col gap-1 col-span-2 sm:col-span-1">
                     <span className="text-2xl font-bold text-green-600">{todayEarnings.toFixed(2)} €</span>
-                    <span className="text-xs text-stone-500 font-medium">Gains aujourd'hui</span>
+                    <span className="text-xs text-stone-500 font-medium">Gains aujourd&apos;hui</span>
                 </div>
             </div>
             {activeDelivery && (

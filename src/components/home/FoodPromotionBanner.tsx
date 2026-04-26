@@ -12,28 +12,19 @@ type FoodWithActiveOffer = FoodWithOfferId & {
 
 const foods = food as FoodItem[];
 const offerList = offers as Offer[];
-
-const offersById = new Map(offerList.map((offer) => [offer.id, offer]));
-const now = Date.now();
-
-const foodWithActiveOffers: FoodWithActiveOffer[] = foods
-    .filter((item): item is FoodWithOfferId => item.offerId !== null)
-    .map((item) => {
-        const offer = offersById.get(item.offerId);
-
-        if (!offer || !isOfferActive(offer.startDate, offer.endDate, now)) {
-            return null;
-        }
-
-        return {
-            ...item,
-            offer,
-            remainingDays: getRemainingOfferDays(offer.endDate, now),
-        };
-    })
-    .filter((item): item is FoodWithActiveOffer => item !== null);
+const NOW = Date.now();
 
 export default function FoodPromotionBanner() {
+    const offersById = new Map(offerList.map((offer) => [offer.id, offer]));
+    const foodWithActiveOffers: FoodWithActiveOffer[] = foods
+        .filter((item): item is FoodWithOfferId => item.offerId !== null)
+        .map((item) => {
+            const offer = offersById.get(item.offerId);
+            if (!offer || !isOfferActive(offer.startDate, offer.endDate, NOW)) return null;
+            return { ...item, offer, remainingDays: getRemainingOfferDays(offer.endDate, NOW) };
+        })
+        .filter((item): item is FoodWithActiveOffer => item !== null);
+
     if (foodWithActiveOffers.length === 0) return null;
 
     return (

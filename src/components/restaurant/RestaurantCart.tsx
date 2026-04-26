@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { CartIcon } from "@/components/icons";
@@ -42,8 +43,8 @@ export default function RestaurantCart({ onCheckout }: { onCheckout?: () => void
             <div className="flex flex-col gap-2 px-4 max-h-80 overflow-y-auto">
                 {items.map((item) => (
                     <div key={item.foodId} className="flex items-center gap-3 py-2">
-                        <div className="w-12 h-10 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <div className="relative w-12 h-10 rounded-lg overflow-hidden bg-stone-100 shrink-0">
+                            <Image src={item.image} alt={item.name} fill className="object-cover" />
                         </div>
 
                         <div className="flex-1 min-w-0">

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useOrder, OrderStatus } from "@/context/OrderContext";
 import { CheckIcon, ClockIcon, TruckIcon, BagIcon } from "@/components/icons";
@@ -22,8 +22,6 @@ const SIMULATION_DELAYS: number[] = [0, 4000, 8000, 13000, 20000, 30000];
 export default function OrderTrackingPage() {
     const { id } = useParams<{ id: string }>();
     const { getOrder, updateStatus } = useOrder();
-    const router = useRouter();
-    const [tick, setTick] = useState(0);
 
     const order = getOrder(id);
 
@@ -37,7 +35,6 @@ export default function OrderTrackingPage() {
             const delay = SIMULATION_DELAYS[i];
             const t = setTimeout(() => {
                 updateStatus(id, status);
-                setTick((n) => n + 1);
             }, delay);
             timers.push(t);
         });
@@ -53,7 +50,7 @@ export default function OrderTrackingPage() {
                     <BagIcon size={32} />
                 </div>
                 <p className="text-stone-700 font-semibold">Commande introuvable</p>
-                <p className="text-stone-400 text-sm text-center">Cette commande n'existe pas ou a été perdue lors d'un rechargement de page.</p>
+                <p className="text-stone-400 text-sm text-center">Cette commande n&apos;existe pas ou a été perdue lors d&apos;un rechargement de page.</p>
                 <Link
                     href="/restaurants"
                     className="mt-2 px-6 py-3 rounded-xl text-sm font-bold text-white"

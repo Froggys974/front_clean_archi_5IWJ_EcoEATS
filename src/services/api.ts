@@ -1,9 +1,13 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+type ErrorResponse = {
+  message?: string;
+};
+
 export async function apiRequest<T>(
   endpoint: string,
   method: string = 'GET',
-  body?: any,
+  body?: unknown,
   token?: string | null
 ): Promise<T> {
   const headers: HeadersInit = {
@@ -21,7 +25,7 @@ export async function apiRequest<T>(
   });
 
   const contentType = response.headers.get('content-type');
-  let data: any;
+  let data: unknown;
 
   if (contentType && contentType.includes('application/json')) {
     data = await response.json();
@@ -30,7 +34,9 @@ export async function apiRequest<T>(
   }
 
   if (!response.ok) {
-    const errorMessage = typeof data === 'object' ? data.message : data;
+    const errorMessage = typeof data === 'object' && data !== null && 'message' in data
+      ? (data as ErrorResponse).message
+      : data;
     throw new Error(errorMessage || `Request failed with status ${response.status}`);
   }
 

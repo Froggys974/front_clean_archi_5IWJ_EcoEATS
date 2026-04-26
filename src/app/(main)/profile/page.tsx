@@ -76,7 +76,7 @@ export default function ProfilePage() {
                 >
                     <div>
                         <h2 className="text-base font-bold text-stone-900">Mes commandes</h2>
-                        <p className="text-sm text-stone-400 mt-0.5">Voir l'historique de vos commandes</p>
+                        <p className="text-sm text-stone-400 mt-0.5">Voir l&apos;historique de vos commandes</p>
                     </div>
                     <span className="text-stone-300 group-hover:text-accent transition-colors text-xl">→</span>
                 </Link>
@@ -85,7 +85,7 @@ export default function ProfilePage() {
                         href="/"
                         className="flex-1 text-center py-3 rounded-xl border border-stone-200 text-stone-600 text-sm font-semibold hover:border-accent hover:text-accent transition-colors"
                     >
-                        Retour à l'accueil
+                        Retour à l&apos;accueil
                     </Link>
                     <button
                         onClick={() => { logout(); router.push("/"); }}

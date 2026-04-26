@@ -40,10 +40,10 @@ export default function ApplicationOnTheWay() {
 
                 <div className="flex flex-col gap-5">
                     <H2 variant="accent" align="left">
-                        L'application arrive bientôt !
+                        L&apos;application arrive bientôt !
                     </H2>
                     <p className="text-stone-700 text-base leading-relaxed">
-                        Ce n'a jamais été aussi facile de commander de la nourriture. Cherchez les meilleures
+                        Ce n&apos;a jamais été aussi facile de commander de la nourriture. Cherchez les meilleures
                         réductions et vous serez perdu dans un monde de mets délicieux.
                     </p>
                     <div className="flex flex-wrap gap-3">

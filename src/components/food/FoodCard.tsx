@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {FoodCardType} from "@/types/food";
 import { formatOfferPercent, formatRemainingDays } from "@/utils/food-formatters";
 import { H3 } from "@/components/ui/Typography";
@@ -16,7 +17,7 @@ export default function FoodCard({
         <a href={url} className="flex flex-col w-full max-w-87.5 group">
             <article className="flex flex-col w-full">
                 <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-primary">
-                    <img src={visual} alt={name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 block" />
+                    <Image src={visual} alt={name} fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
                     {offer && (
                         <div className="absolute -bottom-1 -left-1 bg-primary px-6 py-4 rounded-tr-4xl rounded-bl-2xl flex items-center gap-2 text-white h-21 w-45 ring-1 ring-primary">
                             <span className="text-6xl font-black tracking-tighter">{percent.replace("%", "")}</span>

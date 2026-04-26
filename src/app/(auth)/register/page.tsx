@@ -9,7 +9,9 @@ import { UserIcon, ScooterIcon, BagIcon, CheckIcon } from "@/components/icons";
 
 type Role = "client" | "courier" | "restaurant_owner";
 
-const ROLES: { value: Role; label: string; description: string; Icon: React.ComponentType<any> }[] = [
+type RoleIconProps = { size?: number; className?: string };
+
+const ROLES: { value: Role; label: string; description: string; Icon: React.ComponentType<RoleIconProps> }[] = [
     {
         value: "client",
         label: "Client",
@@ -66,8 +68,8 @@ export default function RegisterPage() {
 
             setSuccess("Inscription réussie ! Redirection vers la connexion…");
             setTimeout(() => router.push("/login"), 2000);
-        } catch (err: any) {
-            setError(err.message || "Une erreur est survenue lors de l'inscription.");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Une erreur est survenue lors de l'inscription.");
         } finally {
             setLoading(false);
         }

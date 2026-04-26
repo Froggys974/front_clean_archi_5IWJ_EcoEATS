@@ -17,6 +17,7 @@ type CartContextType = {
     restaurantId: number | null;
     restaurantName: string;
     addItem: (item: Omit<CartItem, "quantity">, restaurantId: number, restaurantName: string) => AddItemResult;
+    replaceCart: (item: Omit<CartItem, "quantity">, restaurantId: number, restaurantName: string) => void;
     removeItem: (foodId: number) => void;
     updateQuantity: (foodId: number, delta: number) => void;
     clearCart: () => void;
@@ -75,6 +76,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
     };
 
+    const replaceCart = (
+        item: Omit<CartItem, "quantity">,
+        newRestaurantId: number,
+        newRestaurantName: string,
+    ) => {
+        setRestaurantId(newRestaurantId);
+        setRestaurantName(newRestaurantName);
+        setItems([{ ...item, quantity: 1 }]);
+    };
+
     const clearCart = () => {
         setItems([]);
         setRestaurantId(null);
@@ -91,6 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 restaurantId,
                 restaurantName,
                 addItem,
+                replaceCart,
                 removeItem,
                 updateQuantity,
                 clearCart,

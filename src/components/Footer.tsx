@@ -95,7 +95,7 @@ export default function Footer() {
                             className="cursor-pointer w-full py-3 rounded-xl font-bold text-sm text-white transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-95"
                             style={{ background: "linear-gradient(to right, var(--primary), var(--accent))" }}
                         >
-                            S'abonner
+                            S&apos;abonner
                         </button>
                     </form>
                 </div>
@@ -105,7 +105,7 @@ export default function Footer() {
             <div className="border-t border-stone-800">
                 <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-stone-500 text-xs">
                     <span>© {new Date().getFullYear()} EcoEats. Tous droits réservés.</span>
-                    <span>Fait avec ❤️ pour une livraison éco-responsable (et L'ESGI).</span>
+                    <span>Fait avec ❤️ pour une livraison éco-responsable (et L&apos;ESGI).</span>
                 </div>
             </div>
         </footer>

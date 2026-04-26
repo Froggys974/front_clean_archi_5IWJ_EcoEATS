@@ -101,7 +101,7 @@ export default function RestaurantDashboardPage() {
 
 function KpiCard({ label, value, color, bg }: { label: string; value: number; color: string; bg: string }) {
     return (
-        <div className={`rounded-2xl border border-stone-100 shadow-sm p-4 flex flex-col gap-1 bg-white`}>
+        <div className={`rounded-2xl border border-stone-100 shadow-sm p-4 flex flex-col gap-1 ${bg}`}>
             <span className={`text-2xl font-bold ${color}`}>{value}</span>
             <span className="text-xs text-stone-500 font-medium">{label}</span>
         </div>

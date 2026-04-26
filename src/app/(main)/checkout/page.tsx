@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                                     <CreditCardIcon size={20} className="text-accent" />
                                     <h2 className="text-lg font-bold text-stone-900">Paiement simulé</h2>
                                 </div>
-                                <p className="text-sm text-stone-400 -mt-3">Aucune donnée réelle n'est transmise. Simulation uniquement.</p>
+                                <p className="text-sm text-stone-400 -mt-3">Aucune donnée réelle n&apos;est transmise. Simulation uniquement.</p>
 
                                 <Field label="Titulaire de la carte" error={errors.name}>
                                     <input

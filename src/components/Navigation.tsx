@@ -7,7 +7,7 @@ import { UserIcon, MapPinIcon, MenuIcon, XIcon } from "@/components/icons";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Navigation() {
-    const { isAuthenticated, user, logout } = useAuth();
+    const { isAuthenticated, isLoading, user, logout } = useAuth();
     const router = useRouter();
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -48,7 +48,9 @@ export default function Navigation() {
                             Restaurants
                         </Link>
 
-                        {isAuthenticated ? (
+                        {isLoading ? (
+                            <div className="hidden sm:block w-24 h-9 rounded-lg bg-stone-100 animate-pulse" />
+                        ) : isAuthenticated ? (
                             <div className="hidden sm:flex items-center gap-2">
                                 {user?.roles?.includes("restaurateur") && (
                                     <Link

@@ -27,16 +27,13 @@ export default function LoginPage() {
       });
 
       if (response.token) {
-        login(response.token);
-        const base64 = response.token.split('.')[1]?.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = base64 ? JSON.parse(atob(base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '='))) : {};
-        const roles: string[] = payload.roles || [];
+        const roles = login(response.token);
         if (roles.includes('restaurateur')) router.push('/dashboard/restaurant');
         else if (roles.includes('courier')) router.push('/dashboard/courier');
         else router.push('/');
       }
-    } catch (err: any) {
-      setError(err.message || 'Identifiants invalides');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Identifiants invalides');
     } finally {
       setLoading(false);
     }
@@ -99,7 +96,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center text-sm text-gray-600">
             Pas encore de compte ?{' '}
             <Link href="/register" className="text-accent font-semibold hover:underline">
-              S'inscrire
+              S&apos;inscrire
             </Link>
           </div>
         </div>
