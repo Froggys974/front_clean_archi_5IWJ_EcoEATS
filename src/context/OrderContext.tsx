@@ -14,7 +14,7 @@ export type OrderAddress = {
 
 export type Order = {
     id: string;
-    restaurantId: number;
+    restaurantId: string;
     restaurantName: string;
     items: CartItem[];
     address: OrderAddress;

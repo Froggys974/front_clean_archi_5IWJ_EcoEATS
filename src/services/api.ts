@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 type ErrorResponse = {
   message?: string;
@@ -36,7 +36,7 @@ export async function apiRequest<T>(
   if (!response.ok) {
     const errorMessage = typeof data === 'object' && data !== null && 'message' in data
       ? (data as ErrorResponse).message
-      : data;
+      : typeof data === 'string' ? data : undefined;
     throw new Error(errorMessage || `Request failed with status ${response.status}`);
   }
 

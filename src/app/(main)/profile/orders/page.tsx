@@ -1,33 +1,46 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { useOrder } from "@/context/OrderContext";
+import { useApi } from "@/hooks/useApi";
+import { OrderDto } from "@/types/api";
 import { BagIcon } from "@/components/icons";
 
 const STATUS_LABELS: Record<string, string> = {
     PENDING: "En attente",
+    PAID: "En attente",
     ACCEPTED: "Acceptée",
     PREPARING: "En préparation",
+    READY_FOR_PICKUP: "Prête pour collecte",
     READY: "Prête pour collecte",
+    PICKED_UP: "En livraison",
     DELIVERING: "En livraison",
     DELIVERED: "Livrée",
+    REFUSED: "Refusée",
+    CANCELLED: "Annulée",
 };
 
 const STATUS_COLORS: Record<string, string> = {
     PENDING: "bg-stone-100 text-stone-600",
+    PAID: "bg-stone-100 text-stone-600",
     ACCEPTED: "bg-blue-100 text-blue-700",
     PREPARING: "bg-primary/20 text-yellow-700",
+    READY_FOR_PICKUP: "bg-primary/30 text-yellow-800",
     READY: "bg-primary/30 text-yellow-800",
+    PICKED_UP: "bg-accent/10 text-accent",
     DELIVERING: "bg-accent/10 text-accent",
     DELIVERED: "bg-green-100 text-green-700",
+    REFUSED: "bg-red-100 text-red-600",
+    CANCELLED: "bg-red-100 text-red-600",
 };
 
 export default function OrdersPage() {
     const { isAuthenticated, isLoading } = useAuth();
-    const { orders } = useOrder();
+    const { get } = useApi();
+    const [orders, setOrders] = useState<OrderDto[]>([]);
+    const [isOrdersLoading, setIsOrdersLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -36,7 +49,37 @@ export default function OrdersPage() {
         }
     }, [isLoading, isAuthenticated, router]);
 
-    if (isLoading) {
+    useEffect(() => {
+        if (isLoading || !isAuthenticated) {
+            return;
+        }
+
+        let cancelled = false;
+        setIsOrdersLoading(true);
+
+        get<OrderDto[]>("/orders/mine")
+            .then((result) => {
+                if (!cancelled) {
+                    setOrders(result);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setOrders([]);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setIsOrdersLoading(false);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [get, isAuthenticated, isLoading]);
+
+    if (isLoading || isOrdersLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-accent" />
@@ -85,9 +128,9 @@ export default function OrdersPage() {
                             >
                                 <div className="flex items-start justify-between gap-3">
                                     <div>
-                                        <p className="font-bold text-stone-900">{order.restaurantName}</p>
+                                        <p className="font-bold text-stone-900">Restaurant {order.restaurantId.slice(-4)}</p>
                                         <p className="text-xs text-stone-400 mt-0.5">
-                                            {order.createdAt.toLocaleDateString("fr-FR", {
+                                            {new Date(order.createdAt).toLocaleDateString("fr-FR", {
                                                 day: "numeric",
                                                 month: "long",
                                                 hour: "2-digit",
@@ -100,10 +143,10 @@ export default function OrdersPage() {
                                     </span>
                                 </div>
                                 <div className="text-sm text-stone-500">
-                                    {order.items.map((item) => `${item.quantity}× ${item.name}`).join(", ")}
+                                    {order.items.map((item) => `${item.quantity}× ${item.dishName}`).join(", ")}
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm font-bold text-stone-900">{order.total.toFixed(2)} €</span>
+                                    <span className="text-sm font-bold text-stone-900">{order.totalPrice.toFixed(2)} €</span>
                                     <span className="text-xs text-accent font-semibold group-hover:underline">Voir le détail →</span>
                                 </div>
                             </Link>

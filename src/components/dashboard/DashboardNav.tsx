@@ -15,6 +15,7 @@ const RESTAURANT_LINKS = [
     { href: "/dashboard/restaurant", label: "Vue d'ensemble", Icon: BagIcon, exact: true },
     { href: "/dashboard/restaurant/menu", label: "Menu & plats", Icon: CartIcon, exact: false },
     { href: "/dashboard/restaurant/orders", label: "Commandes", Icon: BagIcon, exact: false },
+    { href: "/dashboard/restaurant/settings", label: "Paramètres", Icon: UserIcon, exact: false },
 ];
 
 const COURIER_LINKS = [

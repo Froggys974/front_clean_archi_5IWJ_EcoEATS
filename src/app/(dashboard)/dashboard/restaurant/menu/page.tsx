@@ -9,11 +9,11 @@ import { BagIcon } from "@/components/icons";
 
 export default function MenuPage() {
     const { dishes, deleteDish } = useRestaurant();
-    const [confirmId, setConfirmId] = useState<number | null>(null);
+    const [confirmId, setConfirmId] = useState<string | null>(null);
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (confirmId !== null) {
-            deleteDish(confirmId);
+            await deleteDish(confirmId);
             setConfirmId(null);
         }
     };

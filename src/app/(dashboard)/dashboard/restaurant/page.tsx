@@ -50,6 +50,18 @@ export default function RestaurantDashboardPage() {
                         <p className="text-sm text-stone-400">{dishes.length} plat{dishes.length !== 1 ? "s" : ""} au catalogue</p>
                     </div>
                 </Link>
+                <Link
+                    href="/dashboard/restaurant/settings"
+                    className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 flex items-center gap-4 hover:border-accent transition-colors group"
+                >
+                    <div className="w-12 h-12 rounded-xl bg-stone-100 flex items-center justify-center text-stone-600">
+                        <StarIcon size={24} />
+                    </div>
+                    <div>
+                        <p className="font-bold text-stone-900 group-hover:text-accent transition-colors">Offres & horaires</p>
+                        <p className="text-sm text-stone-400">Gérez promos, statut et heures d'ouverture</p>
+                    </div>
+                </Link>
             </div>
             <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100">

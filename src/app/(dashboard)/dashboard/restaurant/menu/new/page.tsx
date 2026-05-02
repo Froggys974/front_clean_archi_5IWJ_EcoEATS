@@ -9,8 +9,8 @@ export default function NewDishPage() {
     const { addDish } = useRestaurant();
     const router = useRouter();
 
-    const handleSubmit = (data: DishFormData) => {
-        addDish({ ...data, offerId: null, popular: false });
+    const handleSubmit = async (data: DishFormData) => {
+        await addDish({ ...data, offerId: null, popular: false });
         router.push("/dashboard/restaurant/menu");
     };
 

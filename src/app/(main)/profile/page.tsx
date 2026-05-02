@@ -22,7 +22,7 @@ export default function ProfilePage() {
         if (!isLoading && !isAuthenticated) {
             router.push("/login");
         }
-    }, [isLoading, isAuthenticated, router]);
+    }, [isLoading, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (isLoading || !user) {
         return (
