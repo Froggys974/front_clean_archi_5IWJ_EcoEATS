@@ -7,31 +7,34 @@ export interface FoodCardType {
 }
 
 export interface FoodItem {
-    id: number;
+    id: string;
     name: string;
     description: string;
     price: number;
     image: string;
     url: string;
-    offerId: number | null;
-    categoryId: number;
-    placeId: number;
+    offerId: string | null;
+    categoryId: string;
+    placeId: string;
     popular?: boolean;
     allergens?: string[];
     dailyStock?: number;
+    availableStock?: number;
 }
 
 export interface Offer {
-    id: number;
+    id: string;
     discountPercent: number;
     startDate: string;
     endDate: string;
 }
 
 export interface FoodCategory {
-    id: number;
+    id: string;
     name: string;
     description: string;
+    visual?: string;
+    slug?: string;
 }
 
 export interface OpeningHour {
@@ -41,7 +44,7 @@ export interface OpeningHour {
 }
 
 export interface Place {
-    id: number;
+    id: string;
     name: string;
     address: string;
     city: string;

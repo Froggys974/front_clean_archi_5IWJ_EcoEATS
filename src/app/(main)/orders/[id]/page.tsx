@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useOrder, OrderStatus } from "@/context/OrderContext";
+import { useAuth } from "@/context/AuthContext";
+import { useApi } from "@/hooks/useApi";
+import { OrderDto } from "@/types/api";
 import { CheckIcon, ClockIcon, TruckIcon, BagIcon } from "@/components/icons";
+
+type OrderStatus = "PENDING" | "ACCEPTED" | "PREPARING" | "READY" | "DELIVERING" | "DELIVERED";
 
 const STATUS_STEPS: { status: OrderStatus; label: string; description: string }[] = [
     { status: "PENDING", label: "Commande reçue", description: "Votre commande est transmise au restaurant." },
@@ -17,31 +21,50 @@ const STATUS_STEPS: { status: OrderStatus; label: string; description: string }[
 
 const STATUS_ORDER: OrderStatus[] = ["PENDING", "ACCEPTED", "PREPARING", "READY", "DELIVERING", "DELIVERED"];
 
-const SIMULATION_DELAYS: number[] = [0, 4000, 8000, 13000, 20000, 30000];
-
 export default function OrderTrackingPage() {
     const { id } = useParams<{ id: string }>();
-    const { getOrder, updateStatus } = useOrder();
-
-    const order = getOrder(id);
+    const { get } = useApi();
+    const { isLoading: isAuthLoading, isAuthenticated } = useAuth();
+    const [order, setOrder] = useState<OrderDto | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!order) return;
+        if (isAuthLoading || !isAuthenticated) {
+            return;
+        }
 
-        const timers: ReturnType<typeof setTimeout>[] = [];
+        let cancelled = false;
+        setIsLoading(true);
 
-        STATUS_ORDER.forEach((status, i) => {
-            if (i === 0) return;
-            const delay = SIMULATION_DELAYS[i];
-            const t = setTimeout(() => {
-                updateStatus(id, status);
-            }, delay);
-            timers.push(t);
-        });
+        get<OrderDto>(`/orders/${id}`)
+            .then((result) => {
+                if (!cancelled) {
+                    setOrder(result);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setOrder(null);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setIsLoading(false);
+                }
+            });
 
-        return () => timers.forEach(clearTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+        return () => {
+            cancelled = true;
+        };
+    }, [get, id, isAuthLoading, isAuthenticated]);
+
+    if (isLoading || isAuthLoading) {
+        return (
+            <div className="min-h-screen bg-stone-50 pt-24 pb-16 px-4 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-accent" />
+            </div>
+        );
+    }
 
     if (!order) {
         return (
@@ -62,8 +85,9 @@ export default function OrderTrackingPage() {
         );
     }
 
-    const currentIndex = STATUS_ORDER.indexOf(order.status);
-    const isDelivered = order.status === "DELIVERED";
+    const currentStatus = mapOrderStatus(order.status);
+    const currentIndex = STATUS_ORDER.indexOf(currentStatus);
+    const isDelivered = currentStatus === "DELIVERED";
 
     return (
         <div className="min-h-screen bg-stone-50 pt-24 pb-16 px-4">
@@ -74,7 +98,7 @@ export default function OrderTrackingPage() {
                     </Link>
                     <h1 className="text-2xl font-bold text-stone-900 mt-2">Suivi de commande</h1>
                     <p className="text-stone-400 text-sm">
-                        {order.restaurantName} · {order.createdAt.toLocaleDateString("fr-FR", {
+                        Restaurant {order.restaurantId.slice(-4)} · {new Date(order.createdAt).toLocaleDateString("fr-FR", {
                             day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
                         })}
                     </p>
@@ -128,7 +152,7 @@ export default function OrderTrackingPage() {
                                             )}
                                         </div>
                                         {!isLast && (
-                                            <div className={`w-0.5 flex-1 min-h-[2rem] my-1 transition-all duration-500 ${done && i < currentIndex ? "bg-accent" : "bg-stone-100"}`} />
+                                            <div className={`w-0.5 flex-1 min-h-8 my-1 transition-all duration-500 ${done && i < currentIndex ? "bg-accent" : "bg-stone-100"}`} />
                                         )}
                                     </div>
                                     <div className={`pb-4 flex-1 ${isLast ? "" : ""}`}>
@@ -149,22 +173,22 @@ export default function OrderTrackingPage() {
 
                     <div className="flex flex-col gap-2">
                         {order.items.map((item) => (
-                            <div key={item.foodId} className="flex items-center justify-between text-sm">
+                            <div key={item.id} className="flex items-center justify-between text-sm">
                                 <span className="text-stone-600">
-                                    <span className="font-semibold text-stone-800">{item.quantity}×</span> {item.name}
+                                    <span className="font-semibold text-stone-800">{item.quantity}×</span> {item.dishName}
                                 </span>
-                                <span className="text-stone-700 font-medium">{(item.price * item.quantity).toFixed(2)} €</span>
+                                <span className="text-stone-700 font-medium">{item.totalPrice.toFixed(2)} €</span>
                             </div>
                         ))}
                     </div>
 
                     <div className="border-t border-stone-100 pt-3 flex flex-col gap-1.5">
-                        <FeeRow label="Sous-total" value={order.subtotal} />
+                        <FeeRow label="Sous-total" value={order.itemsTotal} />
                         <FeeRow label="Livraison" value={order.deliveryFee} />
                         <FeeRow label="Service" value={order.serviceFee} />
                         <div className="flex justify-between font-bold text-stone-900 text-base pt-2 border-t border-stone-200 mt-1">
                             <span>Total payé</span>
-                            <span>{order.total.toFixed(2)} €</span>
+                            <span>{order.totalPrice.toFixed(2)} €</span>
                         </div>
                     </div>
 
@@ -172,11 +196,8 @@ export default function OrderTrackingPage() {
                         <p className="font-semibold text-stone-700 mb-1 flex items-center gap-1.5">
                             <TruckIcon size={14} className="text-accent" /> Livraison à
                         </p>
-                        <p>{order.address.street}</p>
-                        <p>{order.address.zip} {order.address.city}</p>
-                        {order.address.instructions && (
-                            <p className="mt-1 italic">{order.address.instructions}</p>
-                        )}
+                        <p>{order.deliveryAddress.street}</p>
+                        <p>{order.deliveryAddress.postalCode} {order.deliveryAddress.city}</p>
                     </div>
                 </div>
 
@@ -201,4 +222,21 @@ function FeeRow({ label, value }: { label: string; value: number }) {
             <span>{value.toFixed(2)} €</span>
         </div>
     );
+}
+
+function mapOrderStatus(status: string): OrderStatus {
+    const map: Record<string, OrderStatus> = {
+        PENDING: "PENDING",
+        PAID: "PENDING",
+        ACCEPTED: "ACCEPTED",
+        PREPARING: "PREPARING",
+        READY_FOR_PICKUP: "READY",
+        READY: "READY",
+        PICKED_UP: "DELIVERING",
+        IN_TRANSIT: "DELIVERING",
+        DELIVERING: "DELIVERING",
+        DELIVERED: "DELIVERED",
+    };
+
+    return map[status] ?? "PENDING";
 }

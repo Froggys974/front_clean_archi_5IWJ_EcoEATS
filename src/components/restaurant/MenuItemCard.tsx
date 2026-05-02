@@ -8,7 +8,7 @@ interface MenuItemCardProps {
     onAdd: (item: FoodItem) => void;
     quantityInCart: number;
     onIncrement: (item: FoodItem) => void;
-    onDecrement: (foodId: number) => void;
+    onDecrement: (foodId: string) => void;
 }
 
 export default function MenuItemCard({

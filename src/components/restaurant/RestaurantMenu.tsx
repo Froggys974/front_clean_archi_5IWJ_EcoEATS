@@ -14,26 +14,26 @@ interface CategoryWithItems {
 
 interface RestaurantMenuProps {
     sections: CategoryWithItems[];
-    restaurantId: number;
+    restaurantId: string;
     restaurantName: string;
 }
 
 export default function RestaurantMenu({ sections, restaurantId, restaurantName }: RestaurantMenuProps) {
     const { addItem, replaceCart, updateQuantity, restaurantName: cartRestaurantName, items: cartItems } = useCart();
     const [conflictItem, setConflictItem] = useState<FoodItem | null>(null);
-    const [activeCategory, setActiveCategory] = useState(sections[0]?.category.id ?? 0);
-    const sectionRefs = useRef<Record<number, HTMLElement | null>>({});
+    const [activeCategory, setActiveCategory] = useState(sections[0]?.category.id ?? '');
+    const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-    const scrollToCategory = (id: number) => {
+    const scrollToCategory = (id: string) => {
         setActiveCategory(id);
         sectionRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
-    const cartQty = (foodId: number) =>
+    const cartQty = (foodId: string) =>
         cartItems.find((i) => i.foodId === foodId)?.quantity ?? 0;
 
-    const handleAdd = (item: FoodItem) => {
-        const result = addItem(
+    const handleAdd = async (item: FoodItem) => {
+        const result = await addItem(
             { foodId: item.id, name: item.name, price: item.price, image: item.image },
             restaurantId,
             restaurantName,
@@ -41,9 +41,9 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
         if (result === "conflict") setConflictItem(item);
     };
 
-    const handleConflictConfirm = () => {
+    const handleConflictConfirm = async () => {
         if (!conflictItem) return;
-        replaceCart(
+        await replaceCart(
             { foodId: conflictItem.id, name: conflictItem.name, price: conflictItem.price, image: conflictItem.image },
             restaurantId,
             restaurantName,
@@ -102,7 +102,7 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
                                     onAdd={handleAdd}
                                     quantityInCart={cartQty(item.id)}
                                     onIncrement={handleAdd}
-                                    onDecrement={(id) => updateQuantity(id, -1)}
+                                    onDecrement={(id) => { void updateQuantity(id, -1); }}
                                 />
                             ))}
                         </div>

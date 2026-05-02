@@ -44,7 +44,11 @@ export default function RestaurantCart({ onCheckout }: { onCheckout?: () => void
                 {items.map((item) => (
                     <div key={item.foodId} className="flex items-center gap-3 py-2">
                         <div className="relative w-12 h-10 rounded-lg overflow-hidden bg-stone-100 shrink-0">
-                            <Image src={item.image} alt={item.name} fill className="object-cover" />
+                            {item.image ? (
+                                <Image src={item.image} alt={item.name} fill className="object-cover" />
+                            ) : (
+                                <div className="absolute inset-0 bg-stone-200" />
+                            )}
                         </div>
 
                         <div className="flex-1 min-w-0">

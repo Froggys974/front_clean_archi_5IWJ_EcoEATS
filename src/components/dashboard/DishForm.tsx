@@ -14,7 +14,7 @@ export type DishFormData = {
     price: number;
     allergens: string[];
     dailyStock: number;
-    categoryId: number;
+    categoryId: string;
     image: string;
 };
 
@@ -35,7 +35,7 @@ export default function DishForm({ initial, onSubmit, onCancel, submitLabel = "E
         price: initial?.price ?? 0,
         allergens: initial?.allergens ?? [],
         dailyStock: initial?.dailyStock ?? 10,
-        categoryId: initial?.categoryId ?? 1,
+        categoryId: initial?.categoryId ?? 'cat-1',
         image: initial?.image ?? DEFAULT_DISH_IMAGE,
     });
     const [errors, setErrors] = useState<Record<string, string>>({});

@@ -1,6 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useApi } from "@/hooks/useApi";
+import { DeliveryDto, WalletDto } from "@/types/api";
 
 export type DeliveryStatus = "PENDING" | "ACCEPTED" | "PICKED_UP" | "DELIVERED" | "REFUSED";
 
@@ -21,132 +24,107 @@ export type Delivery = {
 
 type CourierContextType = {
     isAvailable: boolean;
-    setAvailable: (v: boolean) => void;
+    setAvailable: (v: boolean) => Promise<void>;
     activeDelivery: Delivery | null;
     pendingDeliveries: Delivery[];
     history: Delivery[];
     walletBalance: number;
-    acceptDelivery: (id: string) => void;
+    isLoading: boolean;
+    acceptDelivery: (id: string) => Promise<void>;
     refuseDelivery: (id: string) => void;
-    pickupDelivery: (id: string) => void;
-    completeDelivery: (id: string) => void;
+    pickupDelivery: (id: string) => Promise<void>;
+    completeDelivery: (id: string) => Promise<void>;
 };
 
 const CourierContext = createContext<CourierContextType | null>(null);
 
-const DEMO_PENDING: Delivery[] = [
-    {
-        id: "dlv-1",
-        restaurantName: "Luigi's Kitchen",
-        restaurantAddress: "12 rue de la Paix, Paris",
-        customerName: "Sophie Martin",
-        customerAddress: "45 boulevard Haussmann, Paris",
-        items: [{ name: "Pizza Margherita", quantity: 2 }, { name: "Tiramisu", quantity: 1 }],
-        subtotal: 24.97,
-        distance: 1.8,
-        fee: 5.20,
-        tip: 2.00,
-        status: "PENDING",
-        createdAt: new Date(Date.now() - 1000 * 60 * 2),
-    },
-    {
-        id: "dlv-2",
-        restaurantName: "Sushi Paradise",
-        restaurantAddress: "8 rue du Temple, Paris",
-        customerName: "Marc Dupont",
-        customerAddress: "22 avenue de la République, Paris",
-        items: [{ name: "Plateau sushi 24 pièces", quantity: 1 }],
-        subtotal: 38.00,
-        distance: 2.4,
-        fee: 6.80,
-        tip: 3.00,
-        status: "PENDING",
-        createdAt: new Date(Date.now() - 1000 * 60 * 5),
-    },
-];
-
-const DEMO_HISTORY: Delivery[] = [
-    {
-        id: "dlv-h1",
-        restaurantName: "Burger House",
-        restaurantAddress: "5 rue Montmartre, Paris",
-        customerName: "Claire Leroy",
-        customerAddress: "18 rue des Martyrs, Paris",
-        items: [{ name: "Double Cheese Burger", quantity: 2 }],
-        subtotal: 28.00,
-        distance: 1.2,
-        fee: 4.50,
-        tip: 1.50,
-        status: "DELIVERED",
-        createdAt: new Date(Date.now() - 1000 * 60 * 45),
-    },
-    {
-        id: "dlv-h2",
-        restaurantName: "Tacos Palace",
-        restaurantAddress: "30 rue Oberkampf, Paris",
-        customerName: "Thomas Bernard",
-        customerAddress: "9 rue de la Roquette, Paris",
-        items: [{ name: "Tacos XL", quantity: 3 }],
-        subtotal: 34.50,
-        distance: 0.9,
-        fee: 3.80,
-        tip: 2.50,
-        status: "DELIVERED",
-        createdAt: new Date(Date.now() - 1000 * 60 * 120),
-    },
-];
-
-const DEMO_WALLET = 42.30;
+function mapDelivery(d: DeliveryDto): Delivery {
+    return {
+        id: d.id,
+        restaurantName: `Restaurant ${d.restaurantId.slice(-4)}`,
+        restaurantAddress: 'Paris', customerName: 'Client', customerAddress: 'Paris',
+        items: [], subtotal: 0,
+        distance: d.distanceKm, fee: d.deliveryFee, tip: d.tipAmount,
+        status: d.status as DeliveryStatus,
+        createdAt: new Date(d.createdAt),
+    };
+}
 
 export function CourierProvider({ children }: { children: React.ReactNode }) {
+    const { get, post, patch } = useApi();
+    const { token, isLoading: isAuthLoading } = useAuth();
     const [isAvailable, setIsAvailable] = useState(true);
-    const [pendingDeliveries, setPendingDeliveries] = useState<Delivery[]>(DEMO_PENDING);
+    const [pendingDeliveries, setPendingDeliveries] = useState<Delivery[]>([]);
     const [activeDelivery, setActiveDelivery] = useState<Delivery | null>(null);
-    const [history, setHistory] = useState<Delivery[]>(DEMO_HISTORY);
-    const [walletBalance, setWalletBalance] = useState(DEMO_WALLET);
+    const [history, setHistory] = useState<Delivery[]>([]);
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const setAvailable = (v: boolean) => setIsAvailable(v);
+    useEffect(() => {
+        if (isAuthLoading) {
+            return;
+        }
 
-    const acceptDelivery = (id: string) => {
-        const delivery = pendingDeliveries.find((d) => d.id === id);
-        if (!delivery) return;
-        setPendingDeliveries((prev) => prev.filter((d) => d.id !== id));
-        setActiveDelivery({ ...delivery, status: "ACCEPTED" });
+        if (!token) {
+            setIsLoading(false);
+            setPendingDeliveries([]);
+            setActiveDelivery(null);
+            setHistory([]);
+            setWalletBalance(0);
+            return;
+        }
+
+        setIsLoading(true);
+        Promise.all([
+            get<DeliveryDto[]>('/deliveries/available').catch(() => [] as DeliveryDto[]),
+            get<DeliveryDto[]>('/deliveries/mine').catch(() => [] as DeliveryDto[]),
+            get<WalletDto>('/deliveries/wallet').catch(() => ({ balance: 0 } as WalletDto)),
+        ]).then(([available, mine, wallet]) => {
+            setPendingDeliveries(available.map(mapDelivery));
+            setHistory(mine.filter(d => d.status === 'DELIVERED').map(mapDelivery));
+            const active = mine.find(d => d.status === 'ACCEPTED' || d.status === 'PICKED_UP');
+            if (active) setActiveDelivery(mapDelivery(active));
+            setWalletBalance(wallet.balance);
+        }).finally(() => setIsLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isAuthLoading, token]);
+
+    const setAvailable = async (v: boolean) => {
+        await patch<{ available: boolean }>('/deliveries/availability', { available: v });
+        setIsAvailable(v);
+    };
+
+    const acceptDelivery = async (id: string) => {
+        const updated = await post<DeliveryDto>(`/deliveries/${id}/accept`);
+        setPendingDeliveries(prev => prev.filter(d => d.id !== id));
+        setActiveDelivery({ ...mapDelivery(updated), status: 'ACCEPTED' });
     };
 
     const refuseDelivery = (id: string) => {
-        setPendingDeliveries((prev) => prev.filter((d) => d.id !== id));
+        setPendingDeliveries(prev => prev.filter(d => d.id !== id));
     };
 
-    const pickupDelivery = (id: string) => {
-        if (activeDelivery?.id === id) {
-            setActiveDelivery({ ...activeDelivery, status: "PICKED_UP" });
-        }
+    const pickupDelivery = async (id: string) => {
+        if (activeDelivery?.id !== id) return;
+        const updated = await post<DeliveryDto>(`/deliveries/${id}/pickup`);
+        setActiveDelivery({ ...mapDelivery(updated), status: 'PICKED_UP' });
     };
 
-    const completeDelivery = (id: string) => {
+    const completeDelivery = async (id: string) => {
         if (!activeDelivery || activeDelivery.id !== id) return;
-        const completed: Delivery = { ...activeDelivery, status: "DELIVERED" };
-        setHistory((prev) => [completed, ...prev]);
-        setWalletBalance((prev) => prev + completed.fee + completed.tip);
+        await post<void>(`/deliveries/${id}/complete`);
+        const completed: Delivery = { ...activeDelivery, status: 'DELIVERED' };
+        setHistory(prev => [completed, ...prev]);
+        setWalletBalance(prev => prev + completed.fee + completed.tip);
         setActiveDelivery(null);
     };
 
     return (
-        <CourierContext.Provider
-            value={{
-                isAvailable,
-                setAvailable,
-                activeDelivery,
-                pendingDeliveries,
-                history,
-                walletBalance,
-                acceptDelivery,
-                refuseDelivery,
-                pickupDelivery,
-                completeDelivery,
-            }}
-        >
+        <CourierContext.Provider value={{
+            isAvailable, setAvailable, activeDelivery, pendingDeliveries,
+            history, walletBalance, isLoading, acceptDelivery, refuseDelivery,
+            pickupDelivery, completeDelivery,
+        }}>
             {children}
         </CourierContext.Provider>
     );
