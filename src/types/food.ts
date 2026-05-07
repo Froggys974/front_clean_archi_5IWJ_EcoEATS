@@ -7,41 +7,41 @@ export interface FoodCardType {
 }
 
 export interface FoodItem {
-    id: number;
+    id: string;
     name: string;
     description: string;
     price: number;
     image: string;
     url: string;
-    offerId: number | null;
-    categoryId: number;
-    placeId: number;
+    offerId: string | null;
+    categoryId: string;
+    placeId: string;
     popular?: boolean;
     allergens?: string[];
     dailyStock?: number;
 }
 
 export interface Offer {
-    id: number;
+    id: string;
     discountPercent: number;
     startDate: string;
     endDate: string;
 }
 
 export interface FoodCategory {
-    id: number;
+    id: string;
     name: string;
     description: string;
 }
 
 export interface OpeningHour {
-    day: number;
-    open: string;
-    close: string;
+    dayOfWeek: number;
+    openTime: string;
+    closeTime: string;
 }
 
 export interface Place {
-    id: number;
+    id: string;
     name: string;
     address: string;
     city: string;
@@ -52,7 +52,7 @@ export interface Place {
     highlighted?: boolean;
     isFast?: boolean;
     offer?: string;
-    OpeningHours?: OpeningHour[];
+    openingHours?: OpeningHour[];
     ownerId?: string;
 }
 

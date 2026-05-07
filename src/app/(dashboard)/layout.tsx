@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const role = user?.roles?.[0];
 
     return (
-        <RestaurantProvider userId={user?.id}>
+        <RestaurantProvider>
             <div className="flex min-h-screen bg-stone-50">
                 {/* Sidebar backdrop (mobile) */}
                 {sidebarOpen && (

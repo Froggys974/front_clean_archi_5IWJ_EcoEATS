@@ -20,7 +20,7 @@ const STEPS: { key: Step; label: string }[] = [
 
 export default function CheckoutPage() {
     const { isAuthenticated, isLoading } = useAuth();
-    const { items, restaurantId, restaurantName, subtotal, clearCart } = useCart();
+    const { items, restaurantId, restaurantName, subtotal, clearCart, cartId } = useCart();
     const { createOrder } = useOrder();
     const router = useRouter();
 
@@ -81,23 +81,19 @@ export default function CheckoutPage() {
     const handlePaymentSubmit = async () => {
         if (!validatePayment()) return;
         setIsSubmitting(true);
-
-        await new Promise((r) => setTimeout(r, 1200));
-
-        const order = createOrder({
-            restaurantId: restaurantId!,
-            restaurantName,
-            items: [...items],
-            address,
-            subtotal,
-            deliveryFee: DELIVERY_FEE,
-            serviceFee: SERVICE_FEE,
-            total,
-        });
-
-        clearCart();
-        setIsSubmitting(false);
-        router.push(`/orders/${order.id}`);
+        try {
+            const order = await createOrder({
+                cartId,
+                address,
+                restaurantName,
+            });
+            clearCart();
+            router.push(`/orders/${order.id}`);
+        } catch {
+            setErrors({ submit: "Erreur lors de la commande. Veuillez réessayer." });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const formatCardNumber = (v: string) => {
@@ -252,6 +248,9 @@ export default function CheckoutPage() {
                                     </Field>
                                 </div>
 
+                                {errors.submit && (
+                                    <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-2.5">{errors.submit}</p>
+                                )}
                                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                                     <button
                                         onClick={() => { setErrors({}); setStep("address"); }}

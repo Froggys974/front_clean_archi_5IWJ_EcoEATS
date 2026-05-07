@@ -10,8 +10,8 @@ type FoodWithActiveOffer = FoodWithOfferId & {
     remainingDays: number;
 };
 
-const foods = food as FoodItem[];
-const offerList = offers as Offer[];
+const foods = food as unknown as FoodItem[];
+const offerList = offers as unknown as Offer[];
 const NOW = Date.now();
 
 export default function FoodPromotionBanner() {

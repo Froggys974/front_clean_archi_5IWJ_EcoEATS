@@ -36,8 +36,8 @@ export async function apiRequest<T>(
   if (!response.ok) {
     const errorMessage = typeof data === 'object' && data !== null && 'message' in data
       ? (data as ErrorResponse).message
-      : data;
-    throw new Error(errorMessage || `Request failed with status ${response.status}`);
+      : typeof data === 'string' ? data : undefined;
+    throw new Error(errorMessage ?? `Request failed with status ${response.status}`);
   }
 
   return data as T;

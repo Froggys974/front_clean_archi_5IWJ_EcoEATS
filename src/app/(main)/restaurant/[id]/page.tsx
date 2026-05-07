@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import placesData from "@/data/place.json";
-import foodData from "@/data/food.json";
-import categoriesData from "@/data/foodCategory.json";
-import { Place, FoodItem, FoodCategory } from "@/types/food";
+import { ApiRestaurant, ApiDish } from "@/types/api";
 import RestaurantHero from "@/components/restaurant/RestaurantHero";
 import RestaurantMenu from "@/components/restaurant/RestaurantMenu";
 import RestaurantCart from "@/components/restaurant/RestaurantCart";
+import MobileCartBarClient from "@/components/restaurant/MobileCartBar";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -13,21 +13,29 @@ interface PageProps {
 
 export default async function RestaurantPage({ params }: PageProps) {
     const { id } = await params;
-    const restaurantId = parseInt(id, 10);
 
-    const restaurant = (placesData as Place[]).find((p) => p.id === restaurantId);
-    if (!restaurant) notFound();
+    const [restaurantRes, dishesRes] = await Promise.all([
+        fetch(`${API_URL}/restaurants/${id}`, { cache: "no-store" }),
+        fetch(`${API_URL}/restaurants/${id}/dishes`, { cache: "no-store" }),
+    ]);
 
-    const foods = (foodData as FoodItem[]).filter((f) => f.placeId === restaurantId);
-    const categories = categoriesData as FoodCategory[];
+    if (!restaurantRes.ok) notFound();
 
-    const categoryIds = [...new Set(foods.map((f) => f.categoryId))];
-    const sections = categoryIds
-        .map((catId) => ({
-            category: categories.find((c) => c.id === catId) ?? { id: catId, name: "Autre", description: "" },
-            items: foods.filter((f) => f.categoryId === catId),
-        }))
-        .filter((s) => s.items.length > 0);
+    const restaurant: ApiRestaurant = await restaurantRes.json();
+    const dishes: ApiDish[] = dishesRes.ok ? await dishesRes.json() : [];
+
+    const categoryMap = new Map<string, ApiDish[]>();
+    for (const dish of dishes) {
+        const cat = dish.category ?? "Autre";
+        const existing = categoryMap.get(cat) ?? [];
+        existing.push(dish);
+        categoryMap.set(cat, existing);
+    }
+
+    const sections = Array.from(categoryMap.entries()).map(([cat, items]) => ({
+        category: { id: cat, name: cat },
+        items,
+    }));
 
     return (
         <div className="min-h-screen bg-stone-50">
@@ -35,7 +43,6 @@ export default async function RestaurantPage({ params }: PageProps) {
 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 <div className="flex gap-8 items-start">
-                    {/* Menu — takes all available space */}
                     <div className="flex-1 min-w-0">
                         <RestaurantMenu
                             sections={sections}
@@ -43,23 +50,13 @@ export default async function RestaurantPage({ params }: PageProps) {
                             restaurantName={restaurant.name}
                         />
                     </div>
-
-                    {/* Cart — sticky sidebar */}
                     <div className="hidden lg:block w-80 xl:w-96 shrink-0 sticky top-28">
                         <RestaurantCart />
                     </div>
                 </div>
             </div>
 
-            {/* Mobile floating cart button — shown when cart has items */}
-            <MobileCartBar />
+            <MobileCartBarClient />
         </div>
     );
 }
-
-function MobileCartBar() {
-    return <MobileCartBarClient />;
-}
-
-// Extracted to keep the server component clean
-import MobileCartBarClient from "@/components/restaurant/MobileCartBar";

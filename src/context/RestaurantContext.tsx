@@ -1,14 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { FoodItem, Place } from "@/types/food";
-import allDishes from "@/data/food.json";
-import allPlaces from "@/data/place.json";
+import { ApiRestaurant, ApiDish } from "@/types/api";
+import { useAuth } from "@/context/AuthContext";
+import { apiRequest } from "@/services/api";
 
 export type DashboardOrderStatus = "PENDING" | "ACCEPTED" | "REFUSED" | "READY" | "DELIVERED";
 
 export type DashboardOrderItem = {
-    foodId: number;
+    foodId: string;
     name: string;
     price: number;
     quantity: number;
@@ -30,112 +31,188 @@ type RestaurantContextType = {
     dishes: FoodItem[];
     orders: DashboardOrder[];
     addDish: (dish: Omit<FoodItem, "id" | "url" | "placeId">) => void;
-    updateDish: (id: number, updates: Partial<FoodItem>) => void;
-    deleteDish: (id: number) => void;
-    getDish: (id: number) => FoodItem | undefined;
+    updateDish: (id: string, updates: Partial<FoodItem>) => void;
+    deleteDish: (id: string) => void;
+    getDish: (id: string) => FoodItem | undefined;
     acceptOrder: (id: string, estimatedMinutes: number) => void;
     refuseOrder: (id: string) => void;
     markReady: (id: string) => void;
 };
 
+type ApiOrderItem = {
+    dishId: string;
+    dishName: string;
+    dishPrice: number;
+    quantity: number;
+};
+
+type ApiOrderForDashboard = {
+    id: string;
+    clientId: string;
+    status: string;
+    items: ApiOrderItem[];
+    deliveryAddress: { street: string; city: string; postalCode: string; country: string };
+    totalPrice: number;
+    preparationTimeMinutes: number | null;
+    createdAt: string;
+};
+
+function apiRestaurantToPlace(apiRestaurant: ApiRestaurant): Place {
+    return {
+        id: apiRestaurant.id,
+        name: apiRestaurant.name,
+        address: apiRestaurant.address.street,
+        city: apiRestaurant.address.city,
+        rating: apiRestaurant.rating,
+        image: apiRestaurant.imageUrl ?? "",
+        url: "",
+        maxDeliveryTime: 30,
+        highlighted: apiRestaurant.highlighted,
+        openingHours: apiRestaurant.openingHours,
+        ownerId: apiRestaurant.ownerId,
+    };
+}
+
+function apiDishToFoodItem(apiDish: ApiDish): FoodItem {
+    return {
+        id: apiDish.id,
+        name: apiDish.name,
+        description: apiDish.description,
+        price: apiDish.price,
+        image: apiDish.imageUrl ?? "",
+        url: "",
+        offerId: null,
+        categoryId: apiDish.category ?? "Autre",
+        placeId: apiDish.restaurantId ?? "",
+        popular: false,
+        allergens: apiDish.allergens,
+        dailyStock: apiDish.dailyStock,
+    };
+}
+
+function apiOrderToDashboard(apiOrder: ApiOrderForDashboard): DashboardOrder {
+    return {
+        id: apiOrder.id,
+        customerName: `Client #${apiOrder.clientId.slice(-6)}`,
+        items: apiOrder.items.map((item) => ({
+            foodId: item.dishId,
+            name: item.dishName,
+            price: item.dishPrice,
+            quantity: item.quantity,
+        })),
+        total: apiOrder.totalPrice,
+        status: apiOrder.status as DashboardOrderStatus,
+        createdAt: new Date(apiOrder.createdAt),
+        estimatedMinutes: apiOrder.preparationTimeMinutes ?? undefined,
+        address: `${apiOrder.deliveryAddress.street}, ${apiOrder.deliveryAddress.city}`,
+    };
+}
+
 const RestaurantContext = createContext<RestaurantContextType | null>(null);
 
-const DEMO_ORDERS: DashboardOrder[] = [
-    {
-        id: "demo-1",
-        customerName: "Sophie Martin",
-        items: [
-            { foodId: 1, name: "Pizza Margherita", price: 8.99, quantity: 2 },
-            { foodId: 5, name: "Chocolate Lava Cake", price: 5.99, quantity: 1 },
-        ],
-        total: 26.47,
-        status: "PENDING",
-        createdAt: new Date(Date.now() - 1000 * 60 * 3),
-        address: "45 rue de Rivoli, Paris",
-    },
-    {
-        id: "demo-2",
-        customerName: "Marc Dubois",
-        items: [
-            { foodId: 7, name: "Pasta Carbonara", price: 11.99, quantity: 1 },
-        ],
-        total: 15.49,
-        status: "ACCEPTED",
-        createdAt: new Date(Date.now() - 1000 * 60 * 12),
-        estimatedMinutes: 20,
-        address: "8 avenue de l'Opéra, Paris",
-    },
-    {
-        id: "demo-3",
-        customerName: "Claire Legrand",
-        items: [
-            { foodId: 1, name: "Pizza Margherita", price: 8.99, quantity: 1 },
-            { foodId: 3, name: "Caesar Salad", price: 6.99, quantity: 1 },
-        ],
-        total: 18.48,
-        status: "READY",
-        createdAt: new Date(Date.now() - 1000 * 60 * 25),
-        estimatedMinutes: 15,
-        address: "12 rue du Louvre, Paris",
-    },
-];
+export function RestaurantProvider({ children }: { children: React.ReactNode }) {
+    const { token, user, isLoading: authLoading } = useAuth();
+    const isOwner = !authLoading && !!token && (user?.roles?.includes("RESTAURATEUR") ?? false);
 
-export function RestaurantProvider({
-    children,
-    userId,
-}: {
-    children: React.ReactNode;
-    userId: string | undefined;
-}) {
-    const places = allPlaces as Place[];
-    const restaurant =
-        places.find((p) => p.ownerId === userId) ?? places[0] ?? null;
+    const [restaurant, setRestaurant] = useState<Place | null>(null);
+    const [dishes, setDishes] = useState<FoodItem[]>([]);
+    const [orders, setOrders] = useState<DashboardOrder[]>([]);
 
-    const initialDishes = (allDishes as FoodItem[]).filter(
-        (d) => d.placeId === restaurant?.id
-    );
+    useEffect(() => {
+        if (!isOwner || !token) return;
 
-    const [dishes, setDishes] = useState<FoodItem[]>(initialDishes);
-    const [orders, setOrders] = useState<DashboardOrder[]>(DEMO_ORDERS);
-    const [nextId, setNextId] = useState(1000);
+        apiRequest<ApiRestaurant>("/restaurants/me/restaurant", "GET", undefined, token)
+            .then((apiRestaurant) => setRestaurant(apiRestaurantToPlace(apiRestaurant)))
+            .catch(() => {});
+
+        apiRequest<ApiDish[]>("/restaurants/me/dishes", "GET", undefined, token)
+            .then((list) => setDishes(list.map(apiDishToFoodItem)))
+            .catch(() => {});
+
+        apiRequest<ApiOrderForDashboard[]>("/orders/restaurant", "GET", undefined, token)
+            .then((list) => setOrders(list.map(apiOrderToDashboard)))
+            .catch(() => {});
+    }, [isOwner, token]);
 
     const addDish = (dish: Omit<FoodItem, "id" | "url" | "placeId">) => {
-        const newDish: FoodItem = {
-            ...dish,
-            id: nextId,
-            url: "",
-            placeId: restaurant?.id ?? 1,
-        };
-        setDishes((prev) => [...prev, newDish]);
-        setNextId((n) => n + 1);
+        const tempId = `tmp-${Date.now()}`;
+        const tempDish: FoodItem = { ...dish, id: tempId, url: "", placeId: restaurant?.id ?? "" };
+        setDishes((prev) => [...prev, tempDish]);
+
+        if (token) {
+            apiRequest<ApiDish>("/restaurants/me/dishes", "POST", {
+                name: dish.name,
+                description: dish.description,
+                priceAmount: dish.price,
+                allergens: dish.allergens ?? [],
+                dailyStock: dish.dailyStock ?? 10,
+                imageUrl: dish.image || undefined,
+                category: dish.categoryId || undefined,
+            }, token)
+                .then((apiDish) => {
+                    setDishes((prev) => prev.map((dish) => dish.id === tempId ? apiDishToFoodItem(apiDish) : dish));
+                })
+                .catch(() => {
+                    setDishes((prev) => prev.filter((dish) => dish.id !== tempId));
+                });
+        }
     };
 
-    const updateDish = (id: number, updates: Partial<FoodItem>) => {
-        setDishes((prev) => prev.map((d) => (d.id === id ? { ...d, ...updates } : d)));
+    const updateDish = (id: string, updates: Partial<FoodItem>) => {
+        setDishes((prev) => prev.map((dish) => (dish.id === id ? { ...dish, ...updates } : dish)));
+
+        if (token) {
+            apiRequest<ApiDish>(`/restaurants/me/dishes/${id}`, "PATCH", {
+                name: updates.name,
+                description: updates.description,
+                priceAmount: updates.price,
+                allergens: updates.allergens,
+                dailyStock: updates.dailyStock,
+                imageUrl: updates.image || undefined,
+                category: updates.categoryId || undefined,
+            }, token)
+                .then((apiDish) => {
+                    setDishes((prev) => prev.map((dish) => dish.id === id ? apiDishToFoodItem(apiDish) : dish));
+                })
+                .catch(() => {});
+        }
     };
 
-    const deleteDish = (id: number) => {
-        setDishes((prev) => prev.filter((d) => d.id !== id));
+    const deleteDish = (id: string) => {
+        setDishes((prev) => prev.filter((dish) => dish.id !== id));
+
+        if (token) {
+            apiRequest(`/restaurants/me/dishes/${id}`, "DELETE", undefined, token).catch(() => {});
+        }
     };
 
-    const getDish = (id: number) => dishes.find((d) => d.id === id);
+    const getDish = (id: string) => dishes.find((dish) => dish.id === id);
 
     const acceptOrder = (id: string, estimatedMinutes: number) => {
         setOrders((prev) =>
-            prev.map((o) => (o.id === id ? { ...o, status: "ACCEPTED", estimatedMinutes } : o))
+            prev.map((order) => (order.id === id ? { ...order, status: "ACCEPTED" as DashboardOrderStatus, estimatedMinutes } : order))
         );
+        if (token) {
+            apiRequest(`/orders/${id}/accept`, "POST", { preparationTimeMinutes: estimatedMinutes }, token).catch(() => {});
+        }
     };
 
     const refuseOrder = (id: string) => {
         setOrders((prev) =>
-            prev.map((o) => (o.id === id ? { ...o, status: "REFUSED" } : o))
+            prev.map((order) => (order.id === id ? { ...order, status: "REFUSED" as DashboardOrderStatus } : order))
         );
+        if (token) {
+            apiRequest(`/orders/${id}/refuse`, "POST", {}, token).catch(() => {});
+        }
     };
 
     const markReady = (id: string) => {
         setOrders((prev) =>
-            prev.map((o) => (o.id === id ? { ...o, status: "READY" } : o))
+            prev.map((order) => (order.id === id ? { ...order, status: "READY" as DashboardOrderStatus } : order))
         );
+        if (token) {
+            apiRequest(`/orders/${id}/ready`, "POST", undefined, token).catch(() => {});
+        }
     };
 
     return (

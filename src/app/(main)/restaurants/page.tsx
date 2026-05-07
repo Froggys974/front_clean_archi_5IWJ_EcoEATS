@@ -1,8 +1,14 @@
-import placeData from "@/data/place.json";
-import { Place } from "@/types/food";
+import { ApiRestaurant } from "@/types/api";
 import RestaurantsClient from "@/components/restaurants/RestaurantsClient";
 
-export default function RestaurantsPage() {
-    const restaurants = placeData as Place[];
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
+export default async function RestaurantsPage() {
+    let restaurants: ApiRestaurant[] = [];
+    try {
+        const res = await fetch(`${API_URL}/restaurants`, { cache: "no-store" });
+        if (res.ok) restaurants = await res.json();
+    } catch { /* API unavailable */ }
+
     return <RestaurantsClient restaurants={restaurants} />;
 }

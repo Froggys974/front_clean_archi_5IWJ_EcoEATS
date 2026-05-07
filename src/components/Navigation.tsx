@@ -70,13 +70,6 @@ export default function Navigation() {
                                         Mon dashboard
                                     </Link>
                                 )}
-                                <Link
-                                    href="/profile"
-                                    className="flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-accent transition-colors px-3 py-2 rounded-lg hover:bg-stone-50"
-                                >
-                                    <UserIcon size={18} />
-                                    <span>{displayName}</span>
-                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="cursor-pointer border border-stone-200 text-stone-500 text-sm font-medium px-3 py-2 rounded-lg hover:border-accent hover:text-accent transition-colors"
