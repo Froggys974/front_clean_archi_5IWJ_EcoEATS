@@ -1,10 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { apiRequest } from "@/services/api";
 import { UserIcon } from "@/components/icons";
+
+type ProfileData = {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+};
 
 const ROLE_LABELS: Record<string, string> = {
     client: "Client",
@@ -15,8 +24,10 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-    const { user, isAuthenticated, isLoading, logout } = useAuth();
+    const { user, token, isAuthenticated, isLoading, logout } = useAuth();
     const router = useRouter();
+    const [profile, setProfile] = useState<ProfileData | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
@@ -24,7 +35,15 @@ export default function ProfilePage() {
         }
     }, [isLoading, isAuthenticated, router]);
 
-    if (isLoading || !user) {
+    useEffect(() => {
+        if (!token) return;
+        apiRequest<ProfileData>("/me", "GET", undefined, token)
+            .then(setProfile)
+            .catch(() => setProfile(null))
+            .finally(() => setProfileLoading(false));
+    }, [token]);
+
+    if (isLoading || !user || profileLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-accent" />
@@ -32,9 +51,9 @@ export default function ProfilePage() {
         );
     }
 
-    const roles = user.roles ?? [];
-    const displayName = user.firstName
-        ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}`
+    const roles = profile?.roles ?? user.roles ?? [];
+    const displayName = profile
+        ? `${profile.firstName} ${profile.lastName}`.trim()
         : "Mon compte";
 
     return (
@@ -64,10 +83,10 @@ export default function ProfilePage() {
                 </div>
                 <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex flex-col gap-4">
                     <h2 className="text-base font-bold text-stone-900">Informations du compte</h2>
-                    {user.email && <InfoRow label="Email" value={user.email} />}
+                    {profile?.email && <InfoRow label="Email" value={profile.email} />}
                     <InfoRow
                         label="Rôle(s)"
-                        value={roles.map((r) => ROLE_LABELS[r] ?? r).join(", ") || "—"}
+                        value={roles.map((role) => ROLE_LABELS[role] ?? role).join(", ") || "—"}
                     />
                 </div>
                 <Link

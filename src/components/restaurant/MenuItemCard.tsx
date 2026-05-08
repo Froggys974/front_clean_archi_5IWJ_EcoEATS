@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { FoodItem } from "@/types/food";
+import { ApiDish } from "@/types/api";
 
 interface MenuItemCardProps {
-    item: FoodItem;
-    onAdd: (item: FoodItem) => void;
+    item: ApiDish;
+    onAdd: (item: ApiDish) => void;
     quantityInCart: number;
-    onIncrement: (item: FoodItem) => void;
-    onDecrement: (foodId: number) => void;
+    onIncrement: (item: ApiDish) => void;
+    onDecrement: (foodId: string) => void;
 }
 
 export default function MenuItemCard({
@@ -18,8 +18,9 @@ export default function MenuItemCard({
     onIncrement,
     onDecrement,
 }: MenuItemCardProps) {
-    const outOfStock = (item.dailyStock ?? 1) === 0;
-    const lowStock = !outOfStock && (item.dailyStock ?? 99) <= 3;
+    const outOfStock = item.dailyStock === 0 || !item.isAvailable;
+    const lowStock = !outOfStock && item.dailyStock <= 3;
+    const imgSrc = item.imageUrl ?? "https://picsum.photos/200/150?random=99";
 
     return (
         <div
@@ -29,9 +30,8 @@ export default function MenuItemCard({
                     : "border-stone-100 bg-white hover:border-accent/30 hover:shadow-sm"
             }`}
         >
-            {/* Image */}
             <div className="relative shrink-0 w-28 h-24 rounded-lg overflow-hidden bg-stone-100">
-                <Image src={item.image} alt={item.name} fill className="object-cover" />
+                <Image src={imgSrc} alt={item.name} fill className="object-cover" />
                 {outOfStock && (
                     <div className="absolute inset-0 bg-stone-900/60 flex items-center justify-center">
                         <span className="text-white text-xs font-bold">Épuisé</span>
@@ -39,7 +39,6 @@ export default function MenuItemCard({
                 )}
             </div>
 
-            {/* Content */}
             <div className="flex flex-col flex-1 gap-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
                     <h3 className="font-semibold text-stone-900 text-base leading-tight line-clamp-1">
@@ -52,14 +51,14 @@ export default function MenuItemCard({
 
                 <p className="text-stone-500 text-sm leading-snug line-clamp-2">{item.description}</p>
 
-                {item.allergens && item.allergens.length > 0 && (
+                {item.allergens.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
-                        {item.allergens.map((a) => (
+                        {item.allergens.map((allergen) => (
                             <span
-                                key={a}
+                                key={allergen}
                                 className="text-[11px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full"
                             >
-                                {a}
+                                {allergen}
                             </span>
                         ))}
                     </div>
@@ -68,12 +67,11 @@ export default function MenuItemCard({
                 <div className="flex items-center justify-between mt-auto pt-2">
                     {lowStock && (
                         <span className="text-xs text-orange-500 font-medium">
-                            Plus que {item.dailyStock} restant{item.dailyStock! > 1 ? "s" : ""}
+                            Plus que {item.dailyStock} restant{item.dailyStock > 1 ? "s" : ""}
                         </span>
                     )}
                     {!lowStock && <span />}
 
-                    {/* Cart controls */}
                     {quantityInCart === 0 ? (
                         <button
                             onClick={() => onAdd(item)}

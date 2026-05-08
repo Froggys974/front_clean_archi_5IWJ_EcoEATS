@@ -10,10 +10,10 @@ export default function EditDishPage() {
     const { getDish, updateDish } = useRestaurant();
     const router = useRouter();
 
-    const dish = getDish(Number(dishId));
+    const dish = getDish(dishId);
 
     const handleSubmit = (data: DishFormData) => {
-        updateDish(Number(dishId), data);
+        updateDish(dishId, data);
         router.push("/dashboard/restaurant/menu");
     };
 

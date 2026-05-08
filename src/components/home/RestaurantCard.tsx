@@ -1,30 +1,23 @@
-import React from 'react';
+import React from "react";
 import Image from "next/image";
-import { Place } from "@/types/food";
+import { ApiRestaurant, ApiOpeningHour } from "@/types/api";
+import { OpeningHour } from "@/types/food";
 import Button from "@/components/ui/Button";
 import { isOpenNow } from "@/utils/openingHours";
 
 interface RestaurantCardProps {
-    restaurant: Place;
+    restaurant: ApiRestaurant;
 }
 
 export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
-    const open = isOpenNow(restaurant.OpeningHours);
+    const hours = restaurant.openingHours as unknown as OpeningHour[];
+    const open = isOpenNow(hours);
+    const imgSrc = restaurant.imageUrl ?? "https://picsum.photos/400/300?random=1";
 
     return (
         <div className="flex flex-col bg-white rounded-xl border border-stone-100 overflow-hidden group/card transition-all hover:shadow-md h-full">
             <div className="relative aspect-video w-full overflow-hidden bg-stone-100">
-                <Image src={restaurant.image} alt={restaurant.name} fill className="object-cover transition-transform duration-300 group-hover/card:scale-105" />
-                {restaurant.offer && (
-                    <span className="absolute top-3 left-0 bg-accent text-white px-3 py-1 rounded-r-full text-xs font-bold shadow-sm">
-                        {restaurant.offer}
-                    </span>
-                )}
-                {restaurant.isFast && (
-                    <span className="absolute bottom-3 right-0 bg-white text-accent px-3 py-1 rounded-l-full text-xs font-bold shadow-sm">
-                        Livraison rapide
-                    </span>
-                )}
+                <Image src={imgSrc} alt={restaurant.name} fill className="object-cover transition-transform duration-300 group-hover/card:scale-105" />
                 {!open && (
                     <div className="absolute inset-0 bg-stone-900/40 flex items-center justify-center">
                         <span className="bg-white/90 text-stone-700 text-xs font-bold px-3 py-1.5 rounded-full">
@@ -45,9 +38,8 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                     </div>
                 </div>
 
-                <p className="text-stone-500 text-xs mb-4">
-                    max {restaurant.maxDeliveryTime} min
-                </p>
+                <p className="text-stone-500 text-xs mb-1">{restaurant.cuisineType}</p>
+                <p className="text-stone-400 text-xs mb-4">{restaurant.address.city}</p>
 
                 <div className="mt-auto">
                     {open ? (

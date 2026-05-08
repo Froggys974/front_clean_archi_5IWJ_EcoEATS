@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { FoodWithRelations } from "@/types/food";
+import { CarouselItem } from "@/types/api";
 import FoodCarouselCard from "./FoodCarouselCard";
 import Carousel from "@/components/ui/Carousel";
 
 interface FoodCarouselProps {
     title: string;
-    foods: FoodWithRelations[];
+    foods: CarouselItem[];
 }
 
 export default function FoodCarousel({ title, foods }: FoodCarouselProps) {

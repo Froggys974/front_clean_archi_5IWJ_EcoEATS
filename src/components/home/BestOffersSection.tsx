@@ -3,7 +3,7 @@ import { H2, H3 } from "@/components/ui/Typography";
 import Button from "@/components/ui/Button";
 
 type OfferCard = {
-    id: number;
+    id: string;
     title: string;
     description: string;
     ctaLabel: string;
@@ -13,28 +13,25 @@ type OfferCard = {
 
 const defaultOffers: OfferCard[] = [
     {
-        id: 1,
+        id: "1",
         title: "Burgers artisanaux",
         description: "Des burgers préparés avec des produits frais et locaux, livrés chauds à votre porte.",
         ctaLabel: "Découvrir",
-        ctaHref: "/",
-        image: "",
+        ctaHref: "/restaurants",
     },
     {
-        id: 2,
+        id: "2",
         title: "Pizzas du chef",
         description: "Pâte maison, ingrédients de saison et cuisson au feu de bois pour une expérience unique.",
         ctaLabel: "Commander",
-        ctaHref: "/",
-        image: "",
+        ctaHref: "/restaurants",
     },
     {
-        id: 3,
+        id: "3",
         title: "Salades fraîches",
         description: "Compositions légères et équilibrées, parfaites pour un repas sain sans sacrifier le goût.",
         ctaLabel: "Explorer",
-        ctaHref: "/",
-        image: "",
+        ctaHref: "/restaurants",
     },
 ];
 
@@ -58,7 +55,6 @@ export default function BestOffersSection({
                             key={offer.id}
                             className="flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group"
                         >
-                            {/* Image area — object-cover regardless of source dimensions */}
                             <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
                                 {offer.image ? (
                                     <Image
@@ -74,7 +70,6 @@ export default function BestOffersSection({
                                 )}
                             </div>
 
-                            {/* Content */}
                             <div className="flex flex-col flex-1 gap-3 p-6">
                                 <H3 variant="stone">{offer.title}</H3>
                                 <p className="text-stone-500 text-sm leading-relaxed flex-1">{offer.description}</p>

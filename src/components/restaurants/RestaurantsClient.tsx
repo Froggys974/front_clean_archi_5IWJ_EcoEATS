@@ -1,41 +1,25 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Place } from "@/types/food";
+import { ApiRestaurant } from "@/types/api";
+import { OpeningHour } from "@/types/food";
+import { isOpenNow } from "@/utils/openingHours";
 import RestaurantCard from "@/components/home/RestaurantCard";
 import { SearchIcon } from "@/components/icons";
 
-type SortKey = "rating" | "delivery" | "name";
+type SortKey = "rating" | "name";
 
 interface RestaurantsClientProps {
-    restaurants: Place[];
-}
-
-function isOpenNow(openingHours?: Place["OpeningHours"]): boolean {
-    if (!openingHours || openingHours.length === 0) return true;
-    const now = new Date();
-    const day = now.getDay();
-    const time = now.getHours() * 60 + now.getMinutes();
-    return openingHours
-        .filter((h) => h.day === day)
-        .some((h) => {
-            const [oh, om] = h.open.split(":").map(Number);
-            const [ch, cm] = h.close.split(":").map(Number);
-            const openT = oh * 60 + om;
-            const closeT = ch * 60 + cm;
-            return closeT < openT ? time >= openT || time < closeT : time >= openT && time < closeT;
-        });
+    restaurants: ApiRestaurant[];
 }
 
 export default function RestaurantsClient({ restaurants }: RestaurantsClientProps) {
     const [search, setSearch] = useState("");
     const [city, setCity] = useState("all");
-    const [onlyFast, setOnlyFast] = useState(false);
-    const [onlyOffers, setOnlyOffers] = useState(false);
     const [sort, setSort] = useState<SortKey>("rating");
 
     const cities = useMemo(
-        () => ["all", ...Array.from(new Set(restaurants.map((r) => r.city))).sort()],
+        () => ["all", ...Array.from(new Set(restaurants.map((restaurant) => restaurant.address.city))).sort()],
         [restaurants]
     );
 
@@ -44,20 +28,19 @@ export default function RestaurantsClient({ restaurants }: RestaurantsClientProp
 
         if (search.trim()) {
             const q = search.trim().toLowerCase();
-            list = list.filter((r) => r.name.toLowerCase().includes(q));
+            list = list.filter((restaurant) => restaurant.name.toLowerCase().includes(q));
         }
-        if (city !== "all") list = list.filter((r) => r.city === city);
-        if (onlyFast) list = list.filter((r) => r.isFast);
-        if (onlyOffers) list = list.filter((r) => r.offer);
+        if (city !== "all") list = list.filter((restaurant) => restaurant.address.city === city);
 
-        return [...list].sort((a, b) => {
-            if (sort === "rating") return b.rating - a.rating;
-            if (sort === "delivery") return a.maxDeliveryTime - b.maxDeliveryTime;
-            return a.name.localeCompare(b.name);
+        return [...list].sort((restaurantA, restaurantB) => {
+            if (sort === "rating") return restaurantB.rating - restaurantA.rating;
+            return restaurantA.name.localeCompare(restaurantB.name);
         });
-    }, [restaurants, search, city, onlyFast, onlyOffers, sort]);
+    }, [restaurants, search, city, sort]);
 
-    const openCount = filtered.filter((r) => isOpenNow(r.OpeningHours)).length;
+    const openCount = filtered.filter((restaurant) =>
+        isOpenNow(restaurant.openingHours as unknown as OpeningHour[])
+    ).length;
 
     return (
         <div className="min-h-screen bg-stone-50">
@@ -91,29 +74,16 @@ export default function RestaurantsClient({ restaurants }: RestaurantsClientProp
                         className="text-sm border border-stone-200 rounded-xl px-3 py-2.5 outline-none focus:border-accent bg-white cursor-pointer text-stone-700"
                     >
                         <option value="all">Toutes les villes</option>
-                        {cities.slice(1).map((c) => (
-                            <option key={c} value={c}>{c}</option>
+                        {cities.slice(1).map((cityName) => (
+                            <option key={cityName} value={cityName}>{cityName}</option>
                         ))}
                     </select>
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <FilterChip
-                            label="Livraison rapide"
-                            active={onlyFast}
-                            onClick={() => setOnlyFast((v) => !v)}
-                        />
-                        <FilterChip
-                            label="Avec offre"
-                            active={onlyOffers}
-                            onClick={() => setOnlyOffers((v) => !v)}
-                        />
-                    </div>
                     <select
                         value={sort}
                         onChange={(e) => setSort(e.target.value as SortKey)}
                         className="text-sm border border-stone-200 rounded-xl px-3 py-2.5 outline-none focus:border-accent bg-white cursor-pointer text-stone-700 ml-auto"
                     >
                         <option value="rating">Mieux notés</option>
-                        <option value="delivery">Livraison rapide</option>
                         <option value="name">A – Z</option>
                     </select>
                 </div>
@@ -125,7 +95,7 @@ export default function RestaurantsClient({ restaurants }: RestaurantsClientProp
                     <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
                         <p className="text-stone-500 font-medium">Aucun restaurant ne correspond à vos critères.</p>
                         <button
-                            onClick={() => { setSearch(""); setCity("all"); setOnlyFast(false); setOnlyOffers(false); }}
+                            onClick={() => { setSearch(""); setCity("all"); }}
                             className="cursor-pointer text-accent text-sm font-semibold hover:underline"
                         >
                             Réinitialiser les filtres
@@ -133,27 +103,12 @@ export default function RestaurantsClient({ restaurants }: RestaurantsClientProp
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filtered.map((r) => (
-                            <RestaurantCard key={r.id} restaurant={r} />
+                        {filtered.map((restaurant) => (
+                            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
                         ))}
                     </div>
                 )}
             </div>
         </div>
-    );
-}
-
-function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
-    return (
-        <button
-            onClick={onClick}
-            className={`cursor-pointer text-sm font-semibold px-4 py-2 rounded-full border transition-all duration-150 ${
-                active
-                    ? "bg-accent text-white border-accent"
-                    : "bg-white text-stone-600 border-stone-200 hover:border-accent hover:text-accent"
-            }`}
-        >
-            {label}
-        </button>
     );
 }
