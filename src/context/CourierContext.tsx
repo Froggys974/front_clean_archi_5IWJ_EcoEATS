@@ -95,7 +95,7 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
             })
             .catch(() => {});
 
-        apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token)
+        apiRequest<ApiWallet>("/wallet/mine", "GET", undefined, token)
             .then((wallet) => setWalletBalance(wallet.balance))
             .catch(() => {});
     }, [isCourier, token]);
@@ -143,7 +143,7 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
         if (token) {
             apiRequest<ApiDelivery>(`/deliveries/${id}/complete`, "POST", undefined, token)
                 .then(() => {
-                    apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token)
+                    apiRequest<ApiWallet>("/wallet/mine", "GET", undefined, token)
                         .then((wallet) => setWalletBalance(wallet.balance))
                         .catch(() => {});
                 })

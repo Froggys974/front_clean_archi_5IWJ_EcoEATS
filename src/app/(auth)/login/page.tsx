@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { apiRequest } from '@/services/api';
+import { authApiRequest } from '@/services/api';
 import { AuthResponse } from '@/types/auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -21,7 +21,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const response = await apiRequest<AuthResponse>('/auth/login', 'POST', {
+      const response = await authApiRequest<AuthResponse>('/auth/login', 'POST', {
         email,
         password,
       });
