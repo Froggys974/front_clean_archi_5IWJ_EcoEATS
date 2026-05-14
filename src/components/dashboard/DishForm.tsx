@@ -51,6 +51,7 @@ export default function DishForm({ initial, onSubmit, onCancel, submitLabel = "E
     const validate = () => {
         const e: Record<string, string> = {};
         if (!form.name.trim()) e.name = "Nom requis";
+        if (!form.description.trim()) e.description = "Description requise";
         if (form.price <= 0) e.price = "Prix invalide";
         if (form.dailyStock < 0) e.dailyStock = "Stock invalide";
         setErrors(e);
@@ -74,7 +75,7 @@ export default function DishForm({ initial, onSubmit, onCancel, submitLabel = "E
                 />
             </Field>
 
-            <Field label="Description" error="">
+            <Field label="Description" error={errors.description}>
                 <textarea
                     value={form.description}
                     onChange={(e) => set("description", e.target.value)}

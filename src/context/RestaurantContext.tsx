@@ -26,6 +26,13 @@ export type DashboardOrder = {
     address: string;
 };
 
+type RestaurantUpdateData = {
+    openingHours?: Array<{ dayOfWeek: number; openTime: string; closeTime: string }>;
+    status?: "OPEN" | "CLOSED" | "TEMPORARILY_CLOSED";
+    description?: string;
+    cuisineType?: string;
+};
+
 type RestaurantContextType = {
     restaurant: Place | null;
     dishes: FoodItem[];
@@ -34,6 +41,7 @@ type RestaurantContextType = {
     updateDish: (id: string, updates: Partial<FoodItem>) => void;
     deleteDish: (id: string) => void;
     getDish: (id: string) => FoodItem | undefined;
+    updateRestaurant: (updates: RestaurantUpdateData) => Promise<void>;
     acceptOrder: (id: string, estimatedMinutes: number) => void;
     refuseOrder: (id: string) => void;
     markReady: (id: string) => void;
@@ -70,6 +78,9 @@ function apiRestaurantToPlace(apiRestaurant: ApiRestaurant): Place {
         highlighted: apiRestaurant.highlighted,
         openingHours: apiRestaurant.openingHours,
         ownerId: apiRestaurant.ownerId,
+        status: apiRestaurant.status,
+        cuisineType: apiRestaurant.cuisineType,
+        description: apiRestaurant.description,
     };
 }
 
@@ -222,6 +233,12 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
 
     const getDish = (id: string) => dishes.find((dish) => dish.id === id);
 
+    const updateRestaurant = async (updates: RestaurantUpdateData): Promise<void> => {
+        if (!token) return;
+        const apiRestaurant = await apiRequest<ApiRestaurant>("/restaurants/me/restaurant", "PATCH", updates, token);
+        setRestaurant(apiRestaurantToPlace(apiRestaurant));
+    };
+
     const acceptOrder = (id: string, estimatedMinutes: number) => {
         setOrders((prev) =>
             prev.map((order) => (order.id === id ? { ...order, status: "ACCEPTED" as DashboardOrderStatus, estimatedMinutes } : order))
@@ -266,7 +283,7 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
 
     return (
         <RestaurantContext.Provider
-            value={{ restaurant, dishes, orders, addDish, updateDish, deleteDish, getDish, acceptOrder, refuseOrder, markReady }}
+            value={{ restaurant, dishes, orders, addDish, updateDish, deleteDish, getDish, updateRestaurant, acceptOrder, refuseOrder, markReady }}
         >
             {children}
         </RestaurantContext.Provider>

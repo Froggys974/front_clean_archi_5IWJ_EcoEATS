@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ApiRestaurant } from "@/types/api";
 import { MapPinIcon, ScooterIcon } from "@/components/icons";
-import { isOpenNow, getTodaySlots, DAY_NAMES } from "@/utils/openingHours";
+import { getOpenState, getTodaySlots, DAY_NAMES } from "@/utils/openingHours";
 import { OpeningHour } from "@/types/food";
 
 interface RestaurantHeroProps {
@@ -11,7 +11,8 @@ interface RestaurantHeroProps {
 
 export default function RestaurantHero({ restaurant }: RestaurantHeroProps) {
     const hours = restaurant.openingHours as unknown as OpeningHour[];
-    const open = isOpenNow(hours);
+    const state = getOpenState(restaurant.status ?? "OPEN", hours);
+    const isOpen = state === "open";
     const todaySlots = getTodaySlots(hours);
     const imgSrc = restaurant.imageUrl ?? "https://picsum.photos/400/300?random=1";
 
@@ -52,11 +53,13 @@ export default function RestaurantHero({ restaurant }: RestaurantHeroProps) {
             <div className="w-full bg-white border-b border-stone-100 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 py-4 flex flex-wrap items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <div className={`w-2.5 h-2.5 rounded-full ${open ? "bg-green-500" : "bg-red-400"}`} />
+                        <div className={`w-2.5 h-2.5 rounded-full ${isOpen ? "bg-green-500" : state === "temporarily_closed" ? "bg-orange-400" : "bg-red-400"}`} />
                         <span className="text-sm font-semibold text-stone-800">
-                            {open ? "Ouvert" : "Fermé"}
+                            {isOpen ? "Ouvert" : state === "temporarily_closed" ? "Temporairement fermé" : "Fermé"}
                         </span>
-                        <span className="text-stone-400 text-sm">— {todaySlots}</span>
+                        {(isOpen || state === "closed_hours") && (
+                            <span className="text-stone-400 text-sm">— {todaySlots}</span>
+                        )}
                     </div>
 
                     {restaurant.openingHours.length > 0 && (
