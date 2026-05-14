@@ -167,7 +167,8 @@ export default function RegisterPage() {
                                 type="tel"
                                 value={personal.phone}
                                 onChange={setPer("phone")}
-                                placeholder="06 00 00 00 00"
+                                required
+                                placeholder="0600000000"
                                 className={inputCls}
                             />
                         </Field>

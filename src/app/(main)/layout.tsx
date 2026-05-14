@@ -4,6 +4,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
+import { DeliveryAddressProvider } from "@/context/DeliveryAddressContext";
 import { useAuth } from "@/context/AuthContext";
 
 export default function MainLayout({
@@ -22,13 +23,15 @@ export default function MainLayout({
   }
 
   return (
-    <OrderProvider>
-      <CartProvider>
-        <Navigation />
-        {children}
-        <Footer />
-      </CartProvider>
-    </OrderProvider>
+    <DeliveryAddressProvider>
+      <OrderProvider>
+        <CartProvider>
+          <Navigation />
+          {children}
+          <Footer />
+        </CartProvider>
+      </OrderProvider>
+    </DeliveryAddressProvider>
   );
 }
 

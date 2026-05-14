@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useOrder, OrderAddress } from "@/context/OrderContext";
+import { useDeliveryAddress } from "@/hooks/useDeliveryAddress";
 import { CheckIcon, MapPinIcon, CreditCardIcon } from "@/components/icons";
-
-const DELIVERY_FEE = 2.5;
-const SERVICE_FEE = 0.5;
+import { DELIVERY_FEE, SERVICE_FEE } from "@/constants/fees";
 
 type Step = "address" | "payment" | "confirm";
 
@@ -22,6 +21,7 @@ export default function CheckoutPage() {
     const { isAuthenticated, isLoading } = useAuth();
     const { items, restaurantId, restaurantName, subtotal, clearCart, cartId } = useCart();
     const { createOrder } = useOrder();
+    const { address: savedAddress } = useDeliveryAddress();
     const router = useRouter();
 
     const [step, setStep] = useState<Step>("address");
@@ -34,11 +34,19 @@ export default function CheckoutPage() {
     const [card, setCard] = useState({ number: "", expiry: "", cvv: "", name: "" });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const redirectingToOrder = useRef(false);
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.push("/login");
-        if (!isLoading && isAuthenticated && items.length === 0) router.push("/restaurants");
+        if (!isLoading && isAuthenticated && items.length === 0 && !redirectingToOrder.current) router.push("/restaurants");
     }, [isLoading, isAuthenticated, items.length, router]);
+
+    useEffect(() => {
+        if (savedAddress && !address.street) {
+            setAddress((prev) => ({ ...prev, street: savedAddress }));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [savedAddress]);
 
     if (isLoading || !isAuthenticated || items.length === 0) {
         return (
@@ -87,6 +95,7 @@ export default function CheckoutPage() {
                 address,
                 restaurantName,
             });
+            redirectingToOrder.current = true;
             clearCart();
             router.push(`/orders/${order.id}`);
         } catch {

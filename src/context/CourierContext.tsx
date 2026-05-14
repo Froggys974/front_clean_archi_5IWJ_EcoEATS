@@ -31,7 +31,7 @@ type CourierContextType = {
     acceptDelivery: (id: string) => void;
     refuseDelivery: (id: string) => void;
     pickupDelivery: (id: string) => void;
-    completeDelivery: (id: string) => void;
+    completeDelivery: (id: string, deliveryCode: string) => Promise<void>;
 };
 
 type ApiDelivery = {
@@ -82,28 +82,52 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (!isCourier || !token) return;
 
-        apiRequest<ApiDelivery[]>("/deliveries/available", "GET", undefined, token)
-            .then((list) => setPendingDeliveries(list.map(apiDeliveryToDelivery)))
-            .catch(() => {});
+        const syncAvailability = async () => {
+            try {
+                await apiRequest("/deliveries/availability", "PATCH", { available: isAvailable }, token);
+            } catch {}
+        };
+        syncAvailability();
 
-        apiRequest<ApiDelivery[]>("/deliveries/mine", "GET", undefined, token)
-            .then((list) => {
-                const delivered = list.filter((delivery) => delivery.status === "DELIVERED");
-                const active = list.find((delivery) => delivery.status === "ACCEPTED" || delivery.status === "PICKED_UP");
+        const pollDeliveries = async () => {
+            try {
+                const list = await apiRequest<ApiDelivery[]>("/deliveries/available", "GET", undefined, token);
+                setPendingDeliveries(list.map(apiDeliveryToDelivery));
+            } catch {}
+
+            try {
+                const list = await apiRequest<ApiDelivery[]>("/deliveries/mine", "GET", undefined, token);
+                const delivered = list.filter((d) => d.status === "DELIVERED");
+                const active = list.find((d) => d.status === "ACCEPTED" || d.status === "PICKED_UP");
                 setHistory(delivered.map(apiDeliveryToDelivery));
-                if (active) setActiveDelivery(apiDeliveryToDelivery(active));
-            })
-            .catch(() => {});
+                setActiveDelivery(active ? apiDeliveryToDelivery(active) : null);
+            } catch {}
+        };
 
-        apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token)
-            .then((wallet) => setWalletBalance(wallet.balance))
-            .catch(() => {});
+        pollDeliveries();
+        const interval = setInterval(pollDeliveries, 5000);
+
+        const fetchWallet = async () => {
+            try {
+                const wallet = await apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token);
+                setWalletBalance(wallet.balance);
+            } catch {}
+        };
+        fetchWallet();
+
+        return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isCourier, token]);
 
     const setAvailable = (v: boolean) => {
         setIsAvailableState(v);
         if (token) {
-            apiRequest("/deliveries/availability", "PATCH", { available: v }, token).catch(() => {});
+            const update = async () => {
+                try {
+                    await apiRequest("/deliveries/availability", "PATCH", { available: v }, token);
+                } catch {}
+            };
+            update();
         }
     };
 
@@ -113,9 +137,13 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
         setPendingDeliveries((prev) => prev.filter((pendingDelivery) => pendingDelivery.id !== id));
         setActiveDelivery({ ...delivery, status: "ACCEPTED" });
         if (token) {
-            apiRequest<ApiDelivery>(`/deliveries/${id}/accept`, "POST", undefined, token)
-                .then((apiDelivery) => setActiveDelivery(apiDeliveryToDelivery(apiDelivery)))
-                .catch(() => {});
+            const accept = async () => {
+                try {
+                    const apiDelivery = await apiRequest<ApiDelivery>(`/deliveries/${id}/accept`, "POST", undefined, token);
+                    setActiveDelivery(apiDeliveryToDelivery(apiDelivery));
+                } catch {}
+            };
+            accept();
         }
     };
 
@@ -127,28 +155,27 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
         if (activeDelivery?.id === id) {
             setActiveDelivery({ ...activeDelivery, status: "PICKED_UP" });
             if (token) {
-                apiRequest<ApiDelivery>(`/deliveries/${id}/pickup`, "POST", undefined, token)
-                    .then((apiDelivery) => setActiveDelivery(apiDeliveryToDelivery(apiDelivery)))
-                    .catch(() => {});
+                const pickup = async () => {
+                    try {
+                        const apiDelivery = await apiRequest<ApiDelivery>(`/deliveries/${id}/pickup`, "POST", undefined, token);
+                        setActiveDelivery(apiDeliveryToDelivery(apiDelivery));
+                    } catch {}
+                };
+                pickup();
             }
         }
     };
 
-    const completeDelivery = (id: string) => {
-        if (!activeDelivery || activeDelivery.id !== id) return;
+    const completeDelivery = async (id: string, deliveryCode: string): Promise<void> => {
+        if (!activeDelivery || activeDelivery.id !== id || !token) return;
+        await apiRequest<ApiDelivery>(`/deliveries/${id}/complete`, "POST", { deliveryCode }, token);
         const completed: Delivery = { ...activeDelivery, status: "DELIVERED" };
         setHistory((prev) => [completed, ...prev]);
-        setWalletBalance((prev) => prev + completed.fee + completed.tip);
         setActiveDelivery(null);
-        if (token) {
-            apiRequest<ApiDelivery>(`/deliveries/${id}/complete`, "POST", undefined, token)
-                .then(() => {
-                    apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token)
-                        .then((wallet) => setWalletBalance(wallet.balance))
-                        .catch(() => {});
-                })
-                .catch(() => {});
-        }
+        try {
+            const wallet = await apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token);
+            setWalletBalance(wallet.balance);
+        } catch {}
     };
 
     return (

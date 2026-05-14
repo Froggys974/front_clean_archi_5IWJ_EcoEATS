@@ -37,7 +37,7 @@ export default function FoodPromotionBanner() {
                         offer={item.offer.discountPercent}
                         name={item.name}
                         remainingDays={item.remainingDays}
-                        url={item.url}
+                        url="/restaurants"
                     />
                 ))}
             </div>

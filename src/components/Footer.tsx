@@ -12,7 +12,7 @@ const cities = [
 const siteLinks = [
     { label: "À propos", href: "/" },
     { label: "Comment ça marche", href: "/" },
-    { label: "Restaurants", href: "/" },
+    { label: "Restaurants", href: "/restaurants" },
     { label: "Carrières", href: "/" },
     { label: "Blog", href: "/" },
     { label: "Contact", href: "/" },
@@ -47,7 +47,7 @@ export default function Footer() {
                             {cities.map((city) => (
                                 <li key={city}>
                                     <Link
-                                        href="/"
+                                        href="/restaurants"
                                         className="text-stone-400 hover:text-accent text-sm transition-colors duration-200"
                                     >
                                         {city}
@@ -105,7 +105,7 @@ export default function Footer() {
             <div className="border-t border-stone-800">
                 <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-stone-500 text-xs">
                     <span>© {new Date().getFullYear()} EcoEats. Tous droits réservés.</span>
-                    <span>Fait avec ❤️ pour une livraison éco-responsable (et L&apos;ESGI).</span>
+                    <span>Fait pour la clean architecture - Florent & Jordan (et L&apos;ESGI).</span>
                 </div>
             </div>
         </footer>

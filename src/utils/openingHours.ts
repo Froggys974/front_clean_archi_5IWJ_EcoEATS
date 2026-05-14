@@ -17,6 +17,14 @@ export function isOpenNow(openingHours: OpeningHour[] = []): boolean {
         });
 }
 
+export type RestaurantOpenState = "open" | "closed_hours" | "temporarily_closed" | "closed";
+
+export function getOpenState(status: string, openingHours: OpeningHour[]): RestaurantOpenState {
+    if (status === "TEMPORARILY_CLOSED") return "temporarily_closed";
+    if (status === "CLOSED") return "closed";
+    return isOpenNow(openingHours) ? "open" : "closed_hours";
+}
+
 export function getTodaySlots(openingHours: OpeningHour[] = []): string {
     const day = new Date().getDay();
     const slots = openingHours.filter((hour) => hour.dayOfWeek === day);

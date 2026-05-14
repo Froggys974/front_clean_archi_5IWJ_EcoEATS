@@ -4,6 +4,8 @@ import RestaurantHero from "@/components/restaurant/RestaurantHero";
 import RestaurantMenu from "@/components/restaurant/RestaurantMenu";
 import RestaurantCart from "@/components/restaurant/RestaurantCart";
 import MobileCartBarClient from "@/components/restaurant/MobileCartBar";
+import { getOpenState } from "@/utils/openingHours";
+import { OpeningHour } from "@/types/food";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -23,6 +25,10 @@ export default async function RestaurantPage({ params }: PageProps) {
 
     const restaurant: ApiRestaurant = await restaurantRes.json();
     const dishes: ApiDish[] = dishesRes.ok ? await dishesRes.json() : [];
+
+    const hours = restaurant.openingHours as unknown as OpeningHour[];
+    const openState = getOpenState(restaurant.status ?? "OPEN", hours);
+    const isOpen = openState === "open";
 
     const categoryMap = new Map<string, ApiDish[]>();
     for (const dish of dishes) {
@@ -48,6 +54,8 @@ export default async function RestaurantPage({ params }: PageProps) {
                             sections={sections}
                             restaurantId={restaurant.id}
                             restaurantName={restaurant.name}
+                            isOpen={isOpen}
+                            restaurantStatus={restaurant.status}
                         />
                     </div>
                     <div className="hidden lg:block w-80 xl:w-96 shrink-0 sticky top-28">

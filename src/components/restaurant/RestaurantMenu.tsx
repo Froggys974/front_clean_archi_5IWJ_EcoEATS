@@ -16,9 +16,11 @@ interface RestaurantMenuProps {
     sections: CategorySection[];
     restaurantId: string;
     restaurantName: string;
+    isOpen?: boolean;
+    restaurantStatus?: string;
 }
 
-export default function RestaurantMenu({ sections, restaurantId, restaurantName }: RestaurantMenuProps) {
+export default function RestaurantMenu({ sections, restaurantId, restaurantName, isOpen = true, restaurantStatus }: RestaurantMenuProps) {
     const { addItem, replaceCart, updateQuantity, restaurantName: cartRestaurantName, items: cartItems } = useCart();
     const [conflictItem, setConflictItem] = useState<ApiDish | null>(null);
     const [activeCategory, setActiveCategory] = useState(sections[0]?.category.id ?? "");
@@ -33,6 +35,7 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
         cartItems.find((cartItem) => cartItem.foodId === foodId)?.quantity ?? 0;
 
     const handleAdd = (item: ApiDish) => {
+        if (!isOpen) return;
         const result = addItem(
             { foodId: item.id, name: item.name, price: item.price, image: item.imageUrl ?? "" },
             restaurantId,
@@ -63,7 +66,17 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
 
     return (
         <>
-            <div className="sticky top-18 z-10 bg-white border-b border-stone-100 shadow-sm">
+            {!isOpen && (
+                <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 ${restaurantStatus === "TEMPORARILY_CLOSED" ? "bg-orange-50 text-orange-700 border border-orange-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+                    <span>{restaurantStatus === "TEMPORARILY_CLOSED" ? "||" : "X"}</span>
+                    <span>
+                        {restaurantStatus === "TEMPORARILY_CLOSED"
+                            ? "Ce restaurant est temporairement fermé — les commandes ne sont pas disponibles pour le moment."
+                            : "Ce restaurant est actuellement fermé — les commandes reprennent à l'ouverture."}
+                    </span>
+                </div>
+            )}
+            <div className={`sticky top-18 z-10 bg-white border-b border-stone-100 shadow-sm${!isOpen ? " opacity-60 pointer-events-none" : ""}`}>
                 <div className="flex gap-1 overflow-x-auto px-1 py-2" style={{ scrollbarWidth: "none" }}>
                     {sections.map(({ category }) => (
                         <button
@@ -81,7 +94,7 @@ export default function RestaurantMenu({ sections, restaurantId, restaurantName 
                 </div>
             </div>
 
-            <div className="flex flex-col gap-10 py-6">
+            <div className={`flex flex-col gap-10 py-6${!isOpen ? " opacity-60 pointer-events-none select-none" : ""}`}>
                 {sections.map(({ category, items }) => (
                     <section
                         key={category.id}

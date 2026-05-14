@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserIcon, MapPinIcon, MenuIcon, XIcon } from "@/components/icons";
 import { useAuth } from "@/context/AuthContext";
+import { useDeliveryAddress } from "@/hooks/useDeliveryAddress";
 
 export default function Navigation() {
     const { isAuthenticated, isLoading, user, logout } = useAuth();
     const router = useRouter();
     const [menuOpen, setMenuOpen] = useState(false);
+    const { address } = useDeliveryAddress();
 
     const displayName = user?.firstName
         ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}`
@@ -34,7 +36,13 @@ export default function Navigation() {
                     {/* Center: address — hidden on mobile */}
                     <div className="hidden md:flex items-center gap-1.5 text-stone-500 text-sm min-w-0 flex-1 justify-center">
                         <MapPinIcon size={16} className="shrink-0 text-accent" />
-                        <span className="truncate max-w-[220px] lg:max-w-xs">4 rue du Bourg, Paris</span>
+                        {address ? (
+                            <span className="truncate max-w-[220px] lg:max-w-xs">{address}</span>
+                        ) : (
+                            <Link href="/" className="truncate max-w-[220px] lg:max-w-xs text-stone-400 hover:text-accent transition-colors">
+                                Où livrer ?
+                            </Link>
+                        )}
                     </div>
 
                     {/* Right side */}
@@ -52,7 +60,7 @@ export default function Navigation() {
                             <div className="hidden sm:block w-24 h-9 rounded-lg bg-stone-100 animate-pulse" />
                         ) : isAuthenticated ? (
                             <div className="hidden sm:flex items-center gap-2">
-                                {user?.roles?.includes("restaurateur") && (
+                                {user?.roles?.includes("RESTAURATEUR") && (
                                     <Link
                                         href="/dashboard/restaurant"
                                         className="text-sm font-bold px-4 py-2 rounded-lg text-white transition-all hover:shadow-md hover:scale-[1.02]"
@@ -61,7 +69,7 @@ export default function Navigation() {
                                         Mon dashboard
                                     </Link>
                                 )}
-                                {user?.roles?.includes("courier") && (
+                                {user?.roles?.includes("COURIER") && (
                                     <Link
                                         href="/dashboard/courier"
                                         className="text-sm font-bold px-4 py-2 rounded-lg text-white transition-all hover:shadow-md hover:scale-[1.02]"
@@ -133,7 +141,17 @@ export default function Navigation() {
                         {/* Address */}
                         <div className="flex items-center gap-2 px-5 py-3 bg-stone-50 border-b border-stone-100">
                             <MapPinIcon size={15} className="text-accent shrink-0" />
-                            <span className="text-sm text-stone-600">4 rue du Bourg, Paris</span>
+                            {address ? (
+                                <span className="text-sm text-stone-600">{address}</span>
+                            ) : (
+                                <Link
+                                    href="/"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="text-sm text-stone-400 hover:text-accent transition-colors"
+                                >
+                                    Où livrer ?
+                                </Link>
+                            )}
                         </div>
 
                         {/* User info if authenticated */}
@@ -158,12 +176,12 @@ export default function Navigation() {
                             </NavLink>
                             {isAuthenticated && (
                                 <>
-                                    {user?.roles?.includes("restaurateur") && (
+                                    {user?.roles?.includes("RESTAURATEUR") && (
                                         <NavLink href="/dashboard/restaurant" onClick={() => setMenuOpen(false)}>
                                             Mon dashboard
                                         </NavLink>
                                     )}
-                                    {user?.roles?.includes("courier") && (
+                                    {user?.roles?.includes("COURIER") && (
                                         <NavLink href="/dashboard/courier" onClick={() => setMenuOpen(false)}>
                                             Mon dashboard
                                         </NavLink>

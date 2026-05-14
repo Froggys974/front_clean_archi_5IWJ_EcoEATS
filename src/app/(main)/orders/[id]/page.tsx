@@ -17,31 +17,24 @@ const STATUS_STEPS: { status: OrderStatus; label: string; description: string }[
 
 const STATUS_ORDER: OrderStatus[] = ["PENDING", "ACCEPTED", "PREPARING", "READY", "DELIVERING", "DELIVERED"];
 
-const SIMULATION_DELAYS: number[] = [0, 4000, 8000, 13000, 20000, 30000];
+const TERMINAL_STATUSES: OrderStatus[] = ["DELIVERED", "REFUSED"];
 
 export default function OrderTrackingPage() {
     const { id } = useParams<{ id: string }>();
-    const { getOrder, updateStatus } = useOrder();
+    const { getOrder, refreshOrder } = useOrder();
 
     const order = getOrder(id);
 
     useEffect(() => {
-        if (!order) return;
+        if (!order || TERMINAL_STATUSES.includes(order.status)) return;
 
-        const timers: ReturnType<typeof setTimeout>[] = [];
+        const interval = setInterval(() => {
+            refreshOrder(id);
+        }, 3000);
 
-        STATUS_ORDER.forEach((status, i) => {
-            if (i === 0) return;
-            const delay = SIMULATION_DELAYS[i];
-            const t = setTimeout(() => {
-                updateStatus(id, status);
-            }, delay);
-            timers.push(t);
-        });
-
-        return () => timers.forEach(clearTimeout);
+        return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, [id, order?.status]);
 
     if (!order) {
         return (
@@ -144,6 +137,20 @@ export default function OrderTrackingPage() {
                         })}
                     </div>
                 </div>
+                {(order.status === "DELIVERING" || order.status === "DELIVERED") && (
+                    <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex flex-col items-center gap-3">
+                        <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">Code de livraison</p>
+                        <div
+                            className="text-4xl font-bold tracking-[0.3em] py-5 px-10 rounded-2xl text-white"
+                            style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
+                        >
+                            {order.deliveryCode}
+                        </div>
+                        <p className="text-xs text-stone-400 text-center max-w-xs">
+                            Communiquez ce code à votre livreur à la réception de votre commande.
+                        </p>
+                    </div>
+                )}
                 <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex flex-col gap-4">
                     <h2 className="font-bold text-stone-900">Détail de la commande</h2>
 

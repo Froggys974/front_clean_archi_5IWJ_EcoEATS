@@ -54,6 +54,9 @@ export interface Place {
     offer?: string;
     openingHours?: OpeningHour[];
     ownerId?: string;
+    status?: string;
+    cuisineType?: string;
+    description?: string;
 }
 
 export interface FoodWithRelations extends FoodItem {

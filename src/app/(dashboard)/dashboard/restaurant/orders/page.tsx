@@ -191,7 +191,7 @@ function OrderCard({
                     </button>
                 </div>
             )}
-            {order.status === "ACCEPTED" && (
+            {(order.status === "ACCEPTED" || order.status === "PREPARING") && (
                 <div className="px-5 pb-4">
                     <button
                         onClick={onReady}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useRestaurant } from "@/context/RestaurantContext";
-import { BagIcon, UserIcon, ScooterIcon, CartIcon, TruckIcon, WalletIcon } from "@/components/icons";
+import { BagIcon, UserIcon, ScooterIcon, CartIcon, TruckIcon, WalletIcon, ClockIcon } from "@/components/icons";
 
 interface DashboardNavProps {
     role?: string;
@@ -15,6 +15,7 @@ const RESTAURANT_LINKS = [
     { href: "/dashboard/restaurant", label: "Vue d'ensemble", Icon: BagIcon, exact: true },
     { href: "/dashboard/restaurant/menu", label: "Menu & plats", Icon: CartIcon, exact: false },
     { href: "/dashboard/restaurant/orders", label: "Commandes", Icon: BagIcon, exact: false },
+    { href: "/dashboard/restaurant/settings", label: "Paramètres", Icon: ClockIcon, exact: false },
 ];
 
 const COURIER_LINKS = [

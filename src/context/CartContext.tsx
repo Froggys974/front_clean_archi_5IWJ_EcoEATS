@@ -82,7 +82,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (!isClient || !token) return;
         const saved = localStorage.getItem(RESTAURANT_NAME_KEY);
         if (saved) setRestaurantName(saved);
-        apiRequest<ApiCart>("/cart", "GET", undefined, token).then(applyCart).catch(() => {});
+        const fetchCart = async () => {
+            try {
+                const cart = await apiRequest<ApiCart>("/cart", "GET", undefined, token);
+                applyCart(cart);
+            } catch {}
+        };
+        fetchCart();
     }, [isClient, token, applyCart]);
 
     const saveRestaurantName = (name: string) => {
@@ -112,11 +118,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (isClient && token) {
-            apiRequest<ApiCart>("/cart/items", "POST", {
-                dishId: item.foodId,
-                restaurantId: newRestaurantId,
-                quantity: 1,
-            }, token).then(applyCart).catch(() => {});
+            const add = async () => {
+                try {
+                    const cart = await apiRequest<ApiCart>("/cart/items", "POST", {
+                        dishId: item.foodId,
+                        restaurantId: newRestaurantId,
+                        quantity: 1,
+                    }, token);
+                    applyCart(cart);
+                } catch {}
+            };
+            add();
         }
 
         return "added";
@@ -132,8 +144,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             return updated;
         });
         if (isClient && token) {
-            apiRequest<ApiCart>(`/cart/items/${foodId}`, "DELETE", undefined, token)
-                .then(applyCart).catch(() => {});
+            const remove = async () => {
+                try {
+                    const cart = await apiRequest<ApiCart>(`/cart/items/${foodId}`, "DELETE", undefined, token);
+                    applyCart(cart);
+                } catch {}
+            };
+            remove();
         }
     };
 
@@ -152,13 +169,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         if (isClient && token && current) {
             const newQty = Math.max(0, current.quantity + delta);
-            if (newQty === 0) {
-                apiRequest<ApiCart>(`/cart/items/${foodId}`, "DELETE", undefined, token)
-                    .then(applyCart).catch(() => {});
-            } else {
-                apiRequest<ApiCart>(`/cart/items/${foodId}`, "PATCH", { quantity: newQty }, token)
-                    .then(applyCart).catch(() => {});
-            }
+            const update = async () => {
+                try {
+                    const cart = newQty === 0
+                        ? await apiRequest<ApiCart>(`/cart/items/${foodId}`, "DELETE", undefined, token)
+                        : await apiRequest<ApiCart>(`/cart/items/${foodId}`, "PATCH", { quantity: newQty }, token);
+                    applyCart(cart);
+                } catch {}
+            };
+            update();
         }
     };
 
@@ -172,14 +191,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setItems([{ ...item, quantity: 1 }]);
 
         if (isClient && token) {
-            apiRequest<ApiCart>("/cart", "DELETE", undefined, token)
-                .then(() => apiRequest<ApiCart>("/cart/items", "POST", {
-                    dishId: item.foodId,
-                    restaurantId: newRestaurantId,
-                    quantity: 1,
-                }, token))
-                .then(applyCart)
-                .catch(() => {});
+            const replace = async () => {
+                try {
+                    await apiRequest<ApiCart>("/cart", "DELETE", undefined, token);
+                    const cart = await apiRequest<ApiCart>("/cart/items", "POST", {
+                        dishId: item.foodId,
+                        restaurantId: newRestaurantId,
+                        quantity: 1,
+                    }, token);
+                    applyCart(cart);
+                } catch {}
+            };
+            replace();
         }
     };
 
@@ -190,8 +213,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setCartId(null);
         localStorage.removeItem(RESTAURANT_NAME_KEY);
         if (isClient && token) {
-            apiRequest<ApiCart>("/cart", "DELETE", undefined, token)
-                .then(applyCart).catch(() => {});
+            const clear = async () => {
+                try {
+                    const cart = await apiRequest<ApiCart>("/cart", "DELETE", undefined, token);
+                    applyCart(cart);
+                } catch {}
+            };
+            clear();
         }
     };
 
