@@ -144,6 +144,20 @@ export default function OrderTrackingPage() {
                         })}
                     </div>
                 </div>
+                {(order.status === "DELIVERING" || order.status === "DELIVERED") && (
+                    <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex flex-col items-center gap-3">
+                        <p className="text-xs font-bold text-stone-400 uppercase tracking-widest">Code de livraison</p>
+                        <div
+                            className="text-4xl font-bold tracking-[0.3em] py-5 px-10 rounded-2xl text-white"
+                            style={{ background: "linear-gradient(135deg, var(--primary), var(--accent))" }}
+                        >
+                            {order.deliveryCode}
+                        </div>
+                        <p className="text-xs text-stone-400 text-center max-w-xs">
+                            Communiquez ce code à votre livreur à la réception de votre commande.
+                        </p>
+                    </div>
+                )}
                 <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-6 flex flex-col gap-4">
                     <h2 className="font-bold text-stone-900">Détail de la commande</h2>
 
