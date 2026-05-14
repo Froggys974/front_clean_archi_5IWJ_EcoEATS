@@ -26,6 +26,7 @@ export type Order = {
     total: number;
     status: OrderStatus;
     createdAt: Date;
+    deliveryCode: string;
 };
 
 type CreateOrderData = {
@@ -62,7 +63,36 @@ type ApiOrder = {
     createdAt: string;
 };
 
-function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = ""): Order {
+type SerializedOrder = Omit<Order, "createdAt"> & { createdAt: string };
+
+const ORDERS_STORAGE_KEY = "ecoEats.orders";
+
+function generateDeliveryCode(): string {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+function serializeOrders(orders: Order[]): string {
+    return JSON.stringify(
+        orders.map((o): SerializedOrder => ({ ...o, createdAt: o.createdAt.toISOString() }))
+    );
+}
+
+function deserializeOrders(json: string): Order[] {
+    const raw: SerializedOrder[] = JSON.parse(json);
+    return raw.map((o) => ({ ...o, createdAt: new Date(o.createdAt) }));
+}
+
+function loadOrdersFromStorage(): Order[] {
+    if (typeof window === "undefined") return [];
+    try {
+        const stored = localStorage.getItem(ORDERS_STORAGE_KEY);
+        return stored ? deserializeOrders(stored) : [];
+    } catch {
+        return [];
+    }
+}
+
+function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = "", deliveryCode = ""): Order {
     return {
         id: apiOrder.id,
         restaurantId: apiOrder.restaurantId,
@@ -85,6 +115,7 @@ function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = ""): Order {
         total: apiOrder.totalPrice,
         status: apiOrder.status as OrderStatus,
         createdAt: new Date(apiOrder.createdAt),
+        deliveryCode,
     };
 }
 
@@ -94,16 +125,30 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const { token, user, isLoading: authLoading } = useAuth();
     const isClient = !authLoading && !!token && (user?.roles?.includes("CLIENT") ?? false);
 
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState<Order[]>(loadOrdersFromStorage);
+
+    useEffect(() => {
+        localStorage.setItem(ORDERS_STORAGE_KEY, serializeOrders(orders));
+    }, [orders]);
 
     useEffect(() => {
         if (!isClient || !token) return;
         apiRequest<ApiOrder[]>("/orders/mine", "GET", undefined, token)
-            .then((list) => setOrders(list.map((apiOrder) => apiOrderToOrder(apiOrder))))
+            .then((list) => {
+                setOrders((prev) => {
+                    const localById = new Map(prev.map((o) => [o.id, o]));
+                    return list.map((apiOrder) => {
+                        const local = localById.get(apiOrder.id);
+                        return apiOrderToOrder(apiOrder, local?.restaurantName ?? "", local?.deliveryCode ?? "");
+                    });
+                });
+            })
             .catch(() => {});
     }, [isClient, token]);
 
     const createOrder = async (data: CreateOrderData): Promise<Order> => {
+        const deliveryCode = generateDeliveryCode();
+
         if (isClient && token && data.cartId) {
             const apiOrder = await apiRequest<ApiOrder>("/orders/checkout", "POST", {
                 cartId: data.cartId,
@@ -112,7 +157,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
                 deliveryPostalCode: data.address.zip,
                 deliveryCountry: "France",
             }, token);
-            const order = apiOrderToOrder(apiOrder, data.restaurantName);
+            const order = apiOrderToOrder(apiOrder, data.restaurantName, deliveryCode);
             setOrders((prev) => [...prev, order]);
             return order;
         }
@@ -129,6 +174,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             total: 3,
             status: "PENDING",
             createdAt: new Date(),
+            deliveryCode,
         };
         setOrders((prev) => [...prev, order]);
         return order;
