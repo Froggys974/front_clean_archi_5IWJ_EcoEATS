@@ -32,6 +32,7 @@ export default function CheckoutPage() {
         instructions: "",
     });
     const [card, setCard] = useState({ number: "", expiry: "", cvv: "", name: "" });
+    const [tipAmount, setTipAmount] = useState<number>(0);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const redirectingToOrder = useRef(false);
@@ -56,7 +57,7 @@ export default function CheckoutPage() {
         );
     }
 
-    const total = subtotal + DELIVERY_FEE + SERVICE_FEE;
+    const total = subtotal + DELIVERY_FEE + SERVICE_FEE + tipAmount;
     const stepIndex = STEPS.findIndex((s) => s.key === step);
 
     const validateAddress = () => {
@@ -94,6 +95,7 @@ export default function CheckoutPage() {
                 cartId,
                 address,
                 restaurantName,
+                tipAmount: tipAmount > 0 ? tipAmount : undefined,
             });
             redirectingToOrder.current = true;
             clearCart();
@@ -257,6 +259,28 @@ export default function CheckoutPage() {
                                     </Field>
                                 </div>
 
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-semibold text-stone-700">
+                                        Pourboire livreur <span className="font-normal text-stone-400">(optionnel — reversé 100% au livreur)</span>
+                                    </label>
+                                    <div className="flex gap-2 flex-wrap">
+                                        {[0, 1, 2, 3, 5].map((amount) => (
+                                            <button
+                                                key={amount}
+                                                type="button"
+                                                onClick={() => setTipAmount(amount)}
+                                                className={`cursor-pointer px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
+                                                    tipAmount === amount
+                                                        ? "border-accent text-accent bg-accent/5"
+                                                        : "border-stone-200 text-stone-500 hover:border-accent hover:text-accent"
+                                                }`}
+                                            >
+                                                {amount === 0 ? "Aucun" : `${amount} €`}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 {errors.submit && (
                                     <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-2.5">{errors.submit}</p>
                                 )}
@@ -308,6 +332,12 @@ export default function CheckoutPage() {
                                 <FeeRow label="Sous-total" value={subtotal} />
                                 <FeeRow label="Livraison" value={DELIVERY_FEE} />
                                 <FeeRow label="Service" value={SERVICE_FEE} />
+                                {tipAmount > 0 && (
+                                    <div className="flex justify-between text-sm text-green-600">
+                                        <span>Pourboire livreur</span>
+                                        <span>{tipAmount.toFixed(2)} €</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between font-bold text-stone-900 text-base pt-2 border-t border-stone-200 mt-1">
                                     <span>Total</span>
                                     <span>{total.toFixed(2)} €</span>

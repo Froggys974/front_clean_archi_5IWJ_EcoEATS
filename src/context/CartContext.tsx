@@ -18,6 +18,7 @@ type ApiCartItem = {
     dishId: string;
     dishName: string;
     dishPrice: number;
+    dishImageUrl: string | null;
     quantity: number;
 };
 
@@ -56,7 +57,7 @@ function hydrateItems(apiItems: ApiCartItem[]): CartItem[] {
         name: apiItem.dishName,
         price: apiItem.dishPrice,
         quantity: apiItem.quantity,
-        image: "",
+        image: apiItem.dishImageUrl ?? "",
     }));
 }
 

@@ -34,6 +34,7 @@ type CreateOrderData = {
     cartId: string | null;
     address: OrderAddress;
     restaurantName: string;
+    tipAmount?: number;
 };
 
 type OrderContextType = {
@@ -169,13 +170,17 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         const deliveryCode = generateDeliveryCode();
 
         if (isClient && token && data.cartId) {
-            const apiOrder = await apiRequest<ApiOrder>("/orders/checkout", "POST", {
+            const checkoutBody: Record<string, unknown> = {
                 cartId: data.cartId,
                 deliveryStreet: data.address.street,
                 deliveryCity: data.address.city,
                 deliveryPostalCode: data.address.zip,
                 deliveryCountry: "France",
-            }, token);
+            };
+            if (data.tipAmount !== undefined && data.tipAmount > 0) {
+                checkoutBody.tipAmount = data.tipAmount;
+            }
+            const apiOrder = await apiRequest<ApiOrder>("/orders/checkout", "POST", checkoutBody, token);
             const order = apiOrderToOrder(apiOrder, data.restaurantName, deliveryCode);
             setOrders((prev) => [...prev, order]);
             return order;

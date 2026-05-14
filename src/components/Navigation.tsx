@@ -78,6 +78,18 @@ export default function Navigation() {
                                         Mon dashboard
                                     </Link>
                                 )}
+                                <Link
+                                    href="/profile"
+                                    className="text-sm font-semibold text-stone-600 hover:text-accent transition-colors px-3 py-2 rounded-lg hover:bg-stone-50"
+                                >
+                                    Mon profil
+                                </Link>
+                                <Link
+                                    href="/profile/orders"
+                                    className="text-sm font-semibold text-stone-600 hover:text-accent transition-colors px-3 py-2 rounded-lg hover:bg-stone-50"
+                                >
+                                    Mes commandes
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="cursor-pointer border border-stone-200 text-stone-500 text-sm font-medium px-3 py-2 rounded-lg hover:border-accent hover:text-accent transition-colors"
