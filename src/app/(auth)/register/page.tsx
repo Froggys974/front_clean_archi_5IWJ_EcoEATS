@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { apiRequest } from "@/services/api";
+import { authApiRequest } from "@/services/api";
 import { RegisterResponse } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -64,7 +64,7 @@ export default function RegisterPage() {
                     ? { ...personal, ...restaurant }
                     : { ...personal };
 
-            await apiRequest<RegisterResponse>(ENDPOINT[role], "POST", payload);
+            await authApiRequest<RegisterResponse>(ENDPOINT[role], "POST", payload);
 
             setSuccess("Inscription réussie ! Redirection vers la connexion…");
             setTimeout(() => router.push("/login"), 2000);
