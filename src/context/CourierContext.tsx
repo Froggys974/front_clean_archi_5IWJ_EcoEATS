@@ -174,15 +174,10 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
         const completed: Delivery = { ...activeDelivery, status: "DELIVERED" };
         setHistory((prev) => [completed, ...prev]);
         setActiveDelivery(null);
-        if (token) {
-            apiRequest<ApiDelivery>(`/deliveries/${id}/complete`, "POST", undefined, token)
-                .then(() => {
-                    apiRequest<ApiWallet>("/wallet/mine", "GET", undefined, token)
-                        .then((wallet) => setWalletBalance(wallet.balance))
-                        .catch(() => {});
-                })
-                .catch(() => {});
-        }
+        try {
+            const wallet = await apiRequest<ApiWallet>("/wallet/mine", "GET", undefined, token);
+            setWalletBalance(wallet.balance);
+        } catch {}
     };
 
     return (
