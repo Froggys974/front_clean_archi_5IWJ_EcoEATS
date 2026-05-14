@@ -6,6 +6,8 @@ import { RegisterResponse } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { UserIcon, ScooterIcon, BagIcon, CheckIcon } from "@/components/icons";
+import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
+import { SelectedAddress } from "@/types/address";
 
 type Role = "client" | "courier" | "restaurant_owner";
 
@@ -42,15 +44,15 @@ export default function RegisterPage() {
     const router = useRouter();
     const [role, setRole] = useState<Role>("client");
     const [personal, setPersonal] = useState({ firstName: "", lastName: "", email: "", phone: "", password: "" });
-    const [restaurant, setRestaurant] = useState({ restaurantName: "", restaurantAddress: "", restaurantCity: "" });
+    const [restaurantName, setRestaurantName] = useState("");
+    const [restaurantAddressInput, setRestaurantAddressInput] = useState("");
+    const [restaurantAddress, setRestaurantAddress] = useState<SelectedAddress | null>(null);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
 
     const setPer = (k: keyof typeof personal) => (e: React.ChangeEvent<HTMLInputElement>) =>
         setPersonal((p) => ({ ...p, [k]: e.target.value }));
-    const setRest = (k: keyof typeof restaurant) => (e: React.ChangeEvent<HTMLInputElement>) =>
-        setRestaurant((p) => ({ ...p, [k]: e.target.value }));
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,9 +61,23 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
+            if (role === "restaurant_owner" && !restaurantAddress) {
+                setError("Veuillez sélectionner une adresse valide pour le restaurant.");
+                setLoading(false);
+                return;
+            }
+
             const payload =
                 role === "restaurant_owner"
-                    ? { ...personal, ...restaurant }
+                    ? {
+                        ...personal,
+                        restaurantName,
+                        restaurantAddress: restaurantAddress!.street,
+                        restaurantCity: restaurantAddress!.city,
+                        restaurantPostalCode: restaurantAddress!.postalCode,
+                        restaurantLatitude: restaurantAddress!.lat,
+                        restaurantLongitude: restaurantAddress!.lng,
+                    }
                     : { ...personal };
 
             await authApiRequest<RegisterResponse>(ENDPOINT[role], "POST", payload);
@@ -191,32 +207,30 @@ export default function RegisterPage() {
 
                                 <Field label="Nom du restaurant">
                                     <input
-                                        value={restaurant.restaurantName}
-                                        onChange={setRest("restaurantName")}
+                                        value={restaurantName}
+                                        onChange={(e) => setRestaurantName(e.target.value)}
                                         required
                                         placeholder="Chez Mario"
                                         className={inputCls}
                                     />
                                 </Field>
 
-                                <Field label="Adresse">
-                                    <input
-                                        value={restaurant.restaurantAddress}
-                                        onChange={setRest("restaurantAddress")}
-                                        required
-                                        placeholder="12 rue de la Paix"
-                                        className={inputCls}
+                                <Field label="Adresse du restaurant">
+                                    <AddressAutocomplete
+                                        value={restaurantAddressInput}
+                                        onChange={setRestaurantAddressInput}
+                                        onSelect={(addr) => {
+                                            setRestaurantAddress(addr);
+                                            setRestaurantAddressInput(addr.label);
+                                        }}
+                                        placeholder="12 rue de la Paix, Paris"
+                                        hasError={!restaurantAddress && restaurantAddressInput.length > 0}
                                     />
-                                </Field>
-
-                                <Field label="Ville">
-                                    <input
-                                        value={restaurant.restaurantCity}
-                                        onChange={setRest("restaurantCity")}
-                                        required
-                                        placeholder="Paris"
-                                        className={inputCls}
-                                    />
+                                    {restaurantAddress && (
+                                        <p className="text-xs text-green-600 mt-1">
+                                            ✓ {restaurantAddress.street}, {restaurantAddress.city} ({restaurantAddress.postalCode})
+                                        </p>
+                                    )}
                                 </Field>
                             </div>
                         )}

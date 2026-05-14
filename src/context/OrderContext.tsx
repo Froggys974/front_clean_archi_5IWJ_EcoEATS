@@ -12,6 +12,8 @@ export type OrderAddress = {
     city: string;
     zip: string;
     instructions?: string;
+    lat?: number;
+    lng?: number;
 };
 
 export type Order = {
@@ -125,6 +127,8 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             deliveryCity: data.address.city,
             deliveryPostalCode: data.address.zip,
             deliveryCountry: "France",
+            ...(data.address.lat !== undefined && { deliveryLatitude: data.address.lat }),
+            ...(data.address.lng !== undefined && { deliveryLongitude: data.address.lng }),
         };
         if (data.tipAmount !== undefined && data.tipAmount > 0) {
             checkoutBody.tipAmount = data.tipAmount;

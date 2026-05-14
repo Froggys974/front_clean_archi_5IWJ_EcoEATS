@@ -2,10 +2,21 @@
 
 import { useState } from "react";
 
-const ALL_ALLERGENS = [
-    "Gluten", "Crustacés", "Œufs", "Poisson", "Arachides",
-    "Soja", "Lait", "Fruits à coque", "Céleri", "Moutarde",
-    "Sésame", "Mollusques", "Lupin", "Sulfites",
+const ALLERGEN_OPTIONS: { label: string; value: string }[] = [
+    { label: "Gluten",          value: "GLUTEN" },
+    { label: "Crustacés",       value: "CRUSTACEANS" },
+    { label: "Œufs",            value: "EGGS" },
+    { label: "Poisson",         value: "FISH" },
+    { label: "Arachides",       value: "PEANUTS" },
+    { label: "Soja",            value: "SOYBEANS" },
+    { label: "Lait",            value: "MILK" },
+    { label: "Fruits à coque",  value: "NUTS" },
+    { label: "Céleri",          value: "CELERY" },
+    { label: "Moutarde",        value: "MUSTARD" },
+    { label: "Sésame",          value: "SESAME" },
+    { label: "Sulfites",        value: "SULPHITES" },
+    { label: "Lupin",           value: "LUPIN" },
+    { label: "Mollusques",      value: "MOLLUSCS" },
 ];
 
 export type DishFormData = {
@@ -43,10 +54,10 @@ export default function DishForm({ initial, onSubmit, onCancel, submitLabel = "E
     const set = <K extends keyof DishFormData>(key: K, value: DishFormData[K]) =>
         setForm((prev) => ({ ...prev, [key]: value }));
 
-    const toggleAllergen = (allergen: string) =>
-        set("allergens", form.allergens.includes(allergen)
-            ? form.allergens.filter((a) => a !== allergen)
-            : [...form.allergens, allergen]);
+    const toggleAllergen = (value: string) =>
+        set("allergens", form.allergens.includes(value)
+            ? form.allergens.filter((a) => a !== value)
+            : [...form.allergens, value]);
 
     const validate = () => {
         const e: Record<string, string> = {};
@@ -109,18 +120,18 @@ export default function DishForm({ initial, onSubmit, onCancel, submitLabel = "E
 
             <Field label="Allergènes" error="">
                 <div className="flex flex-wrap gap-2 mt-1">
-                    {ALL_ALLERGENS.map((a) => (
+                    {ALLERGEN_OPTIONS.map(({ label, value }) => (
                         <button
-                            key={a}
+                            key={value}
                             type="button"
-                            onClick={() => toggleAllergen(a)}
+                            onClick={() => toggleAllergen(value)}
                             className={`cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
-                                form.allergens.includes(a)
+                                form.allergens.includes(value)
                                     ? "bg-accent text-white border-accent"
                                     : "bg-white text-stone-600 border-stone-200 hover:border-accent hover:text-accent"
                             }`}
                         >
-                            {a}
+                            {label}
                         </button>
                     ))}
                 </div>
