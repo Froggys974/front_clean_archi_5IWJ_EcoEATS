@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/services/api";
+import { DELIVERY_FEE, SERVICE_FEE } from "@/constants/fees";
 
 export type OrderStatus = "PENDING" | "ACCEPTED" | "PREPARING" | "READY" | "DELIVERING" | "DELIVERED";
 
@@ -146,7 +147,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
                     return [...apiOrders, ...localOnlyOrders];
                 });
             })
-            .catch(() => {});
+            .catch((error) => console.error("[OrderContext] Failed to sync orders from API:", error));
     }, [isClient, token]);
 
     const createOrder = async (data: CreateOrderData): Promise<Order> => {
@@ -172,9 +173,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             items: [],
             address: data.address,
             subtotal: 0,
-            deliveryFee: 2.5,
-            serviceFee: 0.5,
-            total: 3,
+            deliveryFee: DELIVERY_FEE,
+            serviceFee: SERVICE_FEE,
+            total: DELIVERY_FEE + SERVICE_FEE,
             status: "PENDING",
             createdAt: new Date(),
             deliveryCode,

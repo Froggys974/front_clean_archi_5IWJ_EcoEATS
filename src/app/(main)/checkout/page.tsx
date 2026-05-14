@@ -7,9 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { useOrder, OrderAddress } from "@/context/OrderContext";
 import { useDeliveryAddress } from "@/hooks/useDeliveryAddress";
 import { CheckIcon, MapPinIcon, CreditCardIcon } from "@/components/icons";
-
-const DELIVERY_FEE = 2.5;
-const SERVICE_FEE = 0.5;
+import { DELIVERY_FEE, SERVICE_FEE } from "@/constants/fees";
 
 type Step = "address" | "payment" | "confirm";
 
