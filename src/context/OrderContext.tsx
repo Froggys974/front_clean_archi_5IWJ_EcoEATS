@@ -137,10 +137,13 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             .then((list) => {
                 setOrders((prev) => {
                     const localById = new Map(prev.map((o) => [o.id, o]));
-                    return list.map((apiOrder) => {
+                    const apiOrders = list.map((apiOrder) => {
                         const local = localById.get(apiOrder.id);
                         return apiOrderToOrder(apiOrder, local?.restaurantName ?? "", local?.deliveryCode ?? "");
                     });
+                    const apiIds = new Set(list.map((o) => o.id));
+                    const localOnlyOrders = prev.filter((o) => !apiIds.has(o.id));
+                    return [...apiOrders, ...localOnlyOrders];
                 });
             })
             .catch(() => {});
