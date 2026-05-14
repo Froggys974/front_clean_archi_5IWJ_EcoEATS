@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/services/api";
 import { DELIVERY_FEE, SERVICE_FEE } from "@/constants/fees";
 
-export type OrderStatus = "PENDING" | "ACCEPTED" | "PREPARING" | "READY" | "DELIVERING" | "DELIVERED";
+export type OrderStatus = "PENDING" | "ACCEPTED" | "PREPARING" | "READY" | "DELIVERING" | "DELIVERED" | "REFUSED";
 
 export type OrderAddress = {
     street: string;
@@ -42,6 +42,7 @@ type OrderContextType = {
     createOrder: (data: CreateOrderData) => Promise<Order>;
     updateStatus: (id: string, status: OrderStatus) => void;
     getOrder: (id: string) => Order | null;
+    refreshOrder: (id: string) => Promise<void>;
 };
 
 type ApiOrderItem = {
@@ -61,6 +62,7 @@ type ApiOrder = {
     deliveryFee: number;
     serviceFee: number;
     totalPrice: number;
+    deliveryCode?: string;
     createdAt: string;
 };
 
@@ -93,7 +95,16 @@ function loadOrdersFromStorage(): Order[] {
     }
 }
 
-function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = "", deliveryCode = ""): Order {
+function normalizeOrderStatus(apiStatus: string): OrderStatus {
+    switch (apiStatus) {
+        case "PAID": return "PENDING";
+        case "READY_FOR_PICKUP": return "READY";
+        case "CANCELLED": return "REFUSED";
+        default: return apiStatus as OrderStatus;
+    }
+}
+
+function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = "", fallbackCode = ""): Order {
     return {
         id: apiOrder.id,
         restaurantId: apiOrder.restaurantId,
@@ -114,9 +125,9 @@ function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = "", deliveryCode =
         deliveryFee: apiOrder.deliveryFee,
         serviceFee: apiOrder.serviceFee,
         total: apiOrder.totalPrice,
-        status: apiOrder.status as OrderStatus,
+        status: normalizeOrderStatus(apiOrder.status),
         createdAt: new Date(apiOrder.createdAt),
-        deliveryCode,
+        deliveryCode: apiOrder.deliveryCode ?? fallbackCode,
     };
 }
 
@@ -134,8 +145,9 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (!isClient || !token) return;
-        apiRequest<ApiOrder[]>("/orders/mine", "GET", undefined, token)
-            .then((list) => {
+        const syncOrders = async () => {
+            try {
+                const list = await apiRequest<ApiOrder[]>("/orders/mine", "GET", undefined, token);
                 setOrders((prev) => {
                     const localById = new Map(prev.map((o) => [o.id, o]));
                     const apiOrders = list.map((apiOrder) => {
@@ -146,8 +158,11 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
                     const localOnlyOrders = prev.filter((o) => !apiIds.has(o.id));
                     return [...apiOrders, ...localOnlyOrders];
                 });
-            })
-            .catch((error) => console.error("[OrderContext] Failed to sync orders from API:", error));
+            } catch (error) {
+                console.error("[OrderContext] Failed to sync orders from API:", error);
+            }
+        };
+        syncOrders();
     }, [isClient, token]);
 
     const createOrder = async (data: CreateOrderData): Promise<Order> => {
@@ -191,10 +206,21 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const getOrder = (id: string): Order | null =>
         orders.find((order) => order.id === id) ?? null;
 
+    const refreshOrder = async (id: string): Promise<void> => {
+        if (!token) return;
+        try {
+            const apiOrder = await apiRequest<ApiOrder>(`/orders/${id}`, "GET", undefined, token);
+            setOrders((prev) => prev.map((order) => {
+                if (order.id !== id) return order;
+                return apiOrderToOrder(apiOrder, order.restaurantName, order.deliveryCode);
+            }));
+        } catch {}
+    };
+
     const currentOrder = orders.length > 0 ? orders[orders.length - 1] : null;
 
     return (
-        <OrderContext.Provider value={{ orders, currentOrder, createOrder, updateStatus, getOrder }}>
+        <OrderContext.Provider value={{ orders, currentOrder, createOrder, updateStatus, getOrder, refreshOrder }}>
             {children}
         </OrderContext.Provider>
     );

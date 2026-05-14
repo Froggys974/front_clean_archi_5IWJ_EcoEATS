@@ -37,10 +37,17 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (!token) return;
-        apiRequest<ProfileData>("/me", "GET", undefined, token)
-            .then(setProfile)
-            .catch(() => setProfile(null))
-            .finally(() => setProfileLoading(false));
+        const fetchProfile = async () => {
+            try {
+                const data = await apiRequest<ProfileData>("/me", "GET", undefined, token);
+                setProfile(data);
+            } catch {
+                setProfile(null);
+            } finally {
+                setProfileLoading(false);
+            }
+        };
+        fetchProfile();
     }, [token]);
 
     if (isLoading || !user || profileLoading) {

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { H2 } from "@/components/ui/Typography";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/icons";
 import { ApiCategory } from "@/types/api";
@@ -58,9 +59,10 @@ export default function SearchPerFood({ title, categories = [] }: SearchPerFoodP
                     {visible.map((category) => {
                         const imgSrc = category.imageUrl ?? `https://picsum.photos/200/200?random=${category.id}`;
                         return (
-                            <button
+                            <Link
                                 key={category.id}
-                                className="group flex flex-col items-center gap-3 cursor-pointer"
+                                href="/restaurants"
+                                className="group flex flex-col items-center gap-3"
                             >
                                 <div className="w-full aspect-square rounded-full overflow-hidden bg-white border-2 border-transparent group-hover:border-accent transition-all duration-200 shadow-sm group-hover:shadow-md max-w-28 mx-auto">
                                     <Picture
@@ -75,7 +77,7 @@ export default function SearchPerFood({ title, categories = [] }: SearchPerFoodP
                                 <span className="text-xs sm:text-sm font-semibold text-stone-700 group-hover:text-accent transition-colors text-center leading-tight">
                                     {category.name}
                                 </span>
-                            </button>
+                            </Link>
                         );
                     })}
                 </div>

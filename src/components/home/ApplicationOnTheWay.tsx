@@ -47,14 +47,14 @@ export default function ApplicationOnTheWay() {
                         réductions et vous serez perdu dans un monde de mets délicieux.
                     </p>
                     <div className="flex flex-wrap gap-3">
-                        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl text-accent shadow-sm border border-stone-100 hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl text-accent shadow-sm border border-stone-100 opacity-60 select-none">
                             <GooglePlayIcon size={30} />
                             <div className="flex flex-col text-stone-900 leading-tight">
                                 <small className="text-xs text-stone-400">Get it on</small>
                                 <span className="font-bold text-sm">Google Play</span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl text-accent shadow-sm border border-stone-100 hover:shadow-md transition-shadow cursor-pointer">
+                        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl text-accent shadow-sm border border-stone-100 opacity-60 select-none">
                             <AppleStoreIcon size={30} />
                             <div className="flex flex-col text-stone-900 leading-tight">
                                 <small className="text-xs text-stone-400">Download on the</small>

@@ -60,7 +60,7 @@ export default function Navigation() {
                             <div className="hidden sm:block w-24 h-9 rounded-lg bg-stone-100 animate-pulse" />
                         ) : isAuthenticated ? (
                             <div className="hidden sm:flex items-center gap-2">
-                                {user?.roles?.includes("restaurateur") && (
+                                {user?.roles?.includes("RESTAURATEUR") && (
                                     <Link
                                         href="/dashboard/restaurant"
                                         className="text-sm font-bold px-4 py-2 rounded-lg text-white transition-all hover:shadow-md hover:scale-[1.02]"
@@ -69,7 +69,7 @@ export default function Navigation() {
                                         Mon dashboard
                                     </Link>
                                 )}
-                                {user?.roles?.includes("courier") && (
+                                {user?.roles?.includes("COURIER") && (
                                     <Link
                                         href="/dashboard/courier"
                                         className="text-sm font-bold px-4 py-2 rounded-lg text-white transition-all hover:shadow-md hover:scale-[1.02]"
@@ -176,12 +176,12 @@ export default function Navigation() {
                             </NavLink>
                             {isAuthenticated && (
                                 <>
-                                    {user?.roles?.includes("restaurateur") && (
+                                    {user?.roles?.includes("RESTAURATEUR") && (
                                         <NavLink href="/dashboard/restaurant" onClick={() => setMenuOpen(false)}>
                                             Mon dashboard
                                         </NavLink>
                                     )}
-                                    {user?.roles?.includes("courier") && (
+                                    {user?.roles?.includes("COURIER") && (
                                         <NavLink href="/dashboard/courier" onClick={() => setMenuOpen(false)}>
                                             Mon dashboard
                                         </NavLink>

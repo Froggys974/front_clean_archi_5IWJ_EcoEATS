@@ -6,7 +6,7 @@ import { ApiRestaurant, ApiDish } from "@/types/api";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/services/api";
 
-export type DashboardOrderStatus = "PENDING" | "ACCEPTED" | "REFUSED" | "READY" | "DELIVERED";
+export type DashboardOrderStatus = "PENDING" | "ACCEPTED" | "PREPARING" | "REFUSED" | "READY" | "DELIVERING" | "DELIVERED";
 
 export type DashboardOrderItem = {
     foodId: string;
@@ -90,6 +90,16 @@ function apiDishToFoodItem(apiDish: ApiDish): FoodItem {
     };
 }
 
+function normalizeDashboardStatus(apiStatus: string): DashboardOrderStatus {
+    switch (apiStatus) {
+        case "PAID": return "PENDING";
+        case "READY_FOR_PICKUP": return "READY";
+        case "PICKED_UP": return "DELIVERING";
+        case "CANCELLED": return "REFUSED";
+        default: return apiStatus as DashboardOrderStatus;
+    }
+}
+
 function apiOrderToDashboard(apiOrder: ApiOrderForDashboard): DashboardOrder {
     return {
         id: apiOrder.id,
@@ -101,7 +111,7 @@ function apiOrderToDashboard(apiOrder: ApiOrderForDashboard): DashboardOrder {
             quantity: item.quantity,
         })),
         total: apiOrder.totalPrice,
-        status: apiOrder.status as DashboardOrderStatus,
+        status: normalizeDashboardStatus(apiOrder.status),
         createdAt: new Date(apiOrder.createdAt),
         estimatedMinutes: apiOrder.preparationTimeMinutes ?? undefined,
         address: `${apiOrder.deliveryAddress.street}, ${apiOrder.deliveryAddress.city}`,
@@ -121,17 +131,32 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
     useEffect(() => {
         if (!isOwner || !token) return;
 
-        apiRequest<ApiRestaurant>("/restaurants/me/restaurant", "GET", undefined, token)
-            .then((apiRestaurant) => setRestaurant(apiRestaurantToPlace(apiRestaurant)))
-            .catch(() => {});
+        const fetchRestaurant = async () => {
+            try {
+                const apiRestaurant = await apiRequest<ApiRestaurant>("/restaurants/me/restaurant", "GET", undefined, token);
+                setRestaurant(apiRestaurantToPlace(apiRestaurant));
+            } catch {}
+        };
+        fetchRestaurant();
 
-        apiRequest<ApiDish[]>("/restaurants/me/dishes", "GET", undefined, token)
-            .then((list) => setDishes(list.map(apiDishToFoodItem)))
-            .catch(() => {});
+        const fetchDishes = async () => {
+            try {
+                const list = await apiRequest<ApiDish[]>("/restaurants/me/dishes", "GET", undefined, token);
+                setDishes(list.map(apiDishToFoodItem));
+            } catch {}
+        };
+        fetchDishes();
 
-        apiRequest<ApiOrderForDashboard[]>("/orders/restaurant", "GET", undefined, token)
-            .then((list) => setOrders(list.map(apiOrderToDashboard)))
-            .catch(() => {});
+        const pollOrders = async () => {
+            try {
+                const list = await apiRequest<ApiOrderForDashboard[]>("/orders/restaurant", "GET", undefined, token);
+                setOrders(list.map(apiOrderToDashboard));
+            } catch {}
+        };
+
+        pollOrders();
+        const interval = setInterval(pollOrders, 5000);
+        return () => clearInterval(interval);
     }, [isOwner, token]);
 
     const addDish = (dish: Omit<FoodItem, "id" | "url" | "placeId">) => {
@@ -140,21 +165,23 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
         setDishes((prev) => [...prev, tempDish]);
 
         if (token) {
-            apiRequest<ApiDish>("/restaurants/me/dishes", "POST", {
-                name: dish.name,
-                description: dish.description,
-                priceAmount: dish.price,
-                allergens: dish.allergens ?? [],
-                dailyStock: dish.dailyStock ?? 10,
-                imageUrl: dish.image || undefined,
-                category: dish.categoryId || undefined,
-            }, token)
-                .then((apiDish) => {
-                    setDishes((prev) => prev.map((dish) => dish.id === tempId ? apiDishToFoodItem(apiDish) : dish));
-                })
-                .catch(() => {
-                    setDishes((prev) => prev.filter((dish) => dish.id !== tempId));
-                });
+            const save = async () => {
+                try {
+                    const apiDish = await apiRequest<ApiDish>("/restaurants/me/dishes", "POST", {
+                        name: dish.name,
+                        description: dish.description,
+                        priceAmount: dish.price,
+                        allergens: dish.allergens ?? [],
+                        dailyStock: dish.dailyStock ?? 10,
+                        imageUrl: dish.image || undefined,
+                        category: dish.categoryId || undefined,
+                    }, token);
+                    setDishes((prev) => prev.map((d) => d.id === tempId ? apiDishToFoodItem(apiDish) : d));
+                } catch {
+                    setDishes((prev) => prev.filter((d) => d.id !== tempId));
+                }
+            };
+            save();
         }
     };
 
@@ -162,19 +189,21 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
         setDishes((prev) => prev.map((dish) => (dish.id === id ? { ...dish, ...updates } : dish)));
 
         if (token) {
-            apiRequest<ApiDish>(`/restaurants/me/dishes/${id}`, "PATCH", {
-                name: updates.name,
-                description: updates.description,
-                priceAmount: updates.price,
-                allergens: updates.allergens,
-                dailyStock: updates.dailyStock,
-                imageUrl: updates.image || undefined,
-                category: updates.categoryId || undefined,
-            }, token)
-                .then((apiDish) => {
+            const update = async () => {
+                try {
+                    const apiDish = await apiRequest<ApiDish>(`/restaurants/me/dishes/${id}`, "PATCH", {
+                        name: updates.name,
+                        description: updates.description,
+                        priceAmount: updates.price,
+                        allergens: updates.allergens,
+                        dailyStock: updates.dailyStock,
+                        imageUrl: updates.image || undefined,
+                        category: updates.categoryId || undefined,
+                    }, token);
                     setDishes((prev) => prev.map((dish) => dish.id === id ? apiDishToFoodItem(apiDish) : dish));
-                })
-                .catch(() => {});
+                } catch {}
+            };
+            update();
         }
     };
 
@@ -182,7 +211,12 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
         setDishes((prev) => prev.filter((dish) => dish.id !== id));
 
         if (token) {
-            apiRequest(`/restaurants/me/dishes/${id}`, "DELETE", undefined, token).catch(() => {});
+            const remove = async () => {
+                try {
+                    await apiRequest(`/restaurants/me/dishes/${id}`, "DELETE", undefined, token);
+                } catch {}
+            };
+            remove();
         }
     };
 
@@ -193,7 +227,12 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
             prev.map((order) => (order.id === id ? { ...order, status: "ACCEPTED" as DashboardOrderStatus, estimatedMinutes } : order))
         );
         if (token) {
-            apiRequest(`/orders/${id}/accept`, "POST", { preparationTimeMinutes: estimatedMinutes }, token).catch(() => {});
+            const accept = async () => {
+                try {
+                    await apiRequest(`/orders/${id}/accept`, "POST", { preparationTimeMinutes: estimatedMinutes }, token);
+                } catch {}
+            };
+            accept();
         }
     };
 
@@ -202,7 +241,12 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
             prev.map((order) => (order.id === id ? { ...order, status: "REFUSED" as DashboardOrderStatus } : order))
         );
         if (token) {
-            apiRequest(`/orders/${id}/refuse`, "POST", {}, token).catch(() => {});
+            const refuse = async () => {
+                try {
+                    await apiRequest(`/orders/${id}/refuse`, "POST", {}, token);
+                } catch {}
+            };
+            refuse();
         }
     };
 
@@ -211,7 +255,12 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
             prev.map((order) => (order.id === id ? { ...order, status: "READY" as DashboardOrderStatus } : order))
         );
         if (token) {
-            apiRequest(`/orders/${id}/ready`, "POST", undefined, token).catch(() => {});
+            const ready = async () => {
+                try {
+                    await apiRequest(`/orders/${id}/ready`, "POST", undefined, token);
+                } catch {}
+            };
+            ready();
         }
     };
 

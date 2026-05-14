@@ -7,6 +7,8 @@ import { TruckIcon, MapPinIcon } from "@/components/icons";
 export default function CourierDeliveriesPage() {
     const { isAvailable, pendingDeliveries, activeDelivery, history, acceptDelivery, refuseDelivery, pickupDelivery, completeDelivery } = useCourier();
     const [tab, setTab] = useState<"pending" | "active" | "history">("active");
+    const [codeInput, setCodeInput] = useState("");
+    const [codeError, setCodeError] = useState(false);
 
     return (
         <div className="flex flex-col gap-6 max-w-3xl">
@@ -127,12 +129,37 @@ export default function CourierDeliveriesPage() {
                                 </button>
                             )}
                             {activeDelivery.status === "PICKED_UP" && (
-                                <button
-                                    onClick={() => { completeDelivery(activeDelivery.id); setTab("history"); }}
-                                    className="cursor-pointer py-3 rounded-xl text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-all"
-                                >
-                                    Confirmer la livraison
-                                </button>
+                                <div className="flex flex-col gap-3">
+                                    <div className={`bg-stone-50 rounded-xl px-4 py-3 border ${codeError ? "border-red-400" : "border-stone-200"}`}>
+                                        <p className="text-xs text-stone-500 mb-2 font-medium">Demandez le code de livraison au client</p>
+                                        <input
+                                            type="text"
+                                            maxLength={4}
+                                            placeholder="Code à 4 chiffres"
+                                            value={codeInput}
+                                            onChange={(e) => { setCodeInput(e.target.value.replace(/\D/g, "")); setCodeError(false); }}
+                                            className={`w-full text-center text-2xl font-bold tracking-widest px-4 py-2.5 rounded-lg border focus:outline-none bg-white transition-colors ${codeError ? "border-red-400 text-red-500 focus:border-red-400" : "border-stone-300 focus:border-accent"}`}
+                                        />
+                                        {codeError && (
+                                            <p className="text-xs text-red-500 font-semibold mt-2 text-center">Code incorrect. Vérifiez avec le client.</p>
+                                        )}
+                                    </div>
+                                    <button
+                                        disabled={codeInput.length !== 4}
+                                        onClick={async () => {
+                                            try {
+                                                await completeDelivery(activeDelivery.id, codeInput);
+                                                setCodeInput("");
+                                                setTab("history");
+                                            } catch {
+                                                setCodeError(true);
+                                            }
+                                        }}
+                                        className="cursor-pointer py-3 rounded-xl text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        Confirmer la livraison
+                                    </button>
+                                </div>
                             )}
                         </div>
                     )}
