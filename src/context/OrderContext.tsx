@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/services/api";
-import { DELIVERY_FEE, SERVICE_FEE } from "@/constants/fees";
 
 export type OrderStatus = "PENDING" | "ACCEPTED" | "PREPARING" | "READY" | "DELIVERING" | "DELIVERED" | "REFUSED";
 
@@ -31,7 +30,7 @@ export type Order = {
 };
 
 type CreateOrderData = {
-    cartId: string | null;
+    cartId: string;
     address: OrderAddress;
     restaurantName: string;
     tipAmount?: number;
@@ -67,35 +66,6 @@ type ApiOrder = {
     createdAt: string;
 };
 
-type SerializedOrder = Omit<Order, "createdAt"> & { createdAt: string };
-
-const ORDERS_STORAGE_KEY = "ecoEats.orders";
-
-function generateDeliveryCode(): string {
-    return Math.floor(1000 + Math.random() * 9000).toString();
-}
-
-function serializeOrders(orders: Order[]): string {
-    return JSON.stringify(
-        orders.map((o): SerializedOrder => ({ ...o, createdAt: o.createdAt.toISOString() }))
-    );
-}
-
-function deserializeOrders(json: string): Order[] {
-    const raw: SerializedOrder[] = JSON.parse(json);
-    return raw.map((o) => ({ ...o, createdAt: new Date(o.createdAt) }));
-}
-
-function loadOrdersFromStorage(): Order[] {
-    if (typeof window === "undefined") return [];
-    try {
-        const stored = localStorage.getItem(ORDERS_STORAGE_KEY);
-        return stored ? deserializeOrders(stored) : [];
-    } catch {
-        return [];
-    }
-}
-
 function normalizeOrderStatus(apiStatus: string): OrderStatus {
     switch (apiStatus) {
         case "PAID": return "PENDING";
@@ -105,7 +75,7 @@ function normalizeOrderStatus(apiStatus: string): OrderStatus {
     }
 }
 
-function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = "", fallbackCode = ""): Order {
+function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = ""): Order {
     return {
         id: apiOrder.id,
         restaurantId: apiOrder.restaurantId,
@@ -128,7 +98,7 @@ function apiOrderToOrder(apiOrder: ApiOrder, restaurantName = "", fallbackCode =
         total: apiOrder.totalPrice,
         status: normalizeOrderStatus(apiOrder.status),
         createdAt: new Date(apiOrder.createdAt),
-        deliveryCode: apiOrder.deliveryCode ?? fallbackCode,
+        deliveryCode: apiOrder.deliveryCode ?? "",
     };
 }
 
@@ -138,68 +108,29 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     const { token, user, isLoading: authLoading } = useAuth();
     const isClient = !authLoading && !!token && (user?.roles?.includes("CLIENT") ?? false);
 
-    const [orders, setOrders] = useState<Order[]>(loadOrdersFromStorage);
-
-    useEffect(() => {
-        localStorage.setItem(ORDERS_STORAGE_KEY, serializeOrders(orders));
-    }, [orders]);
+    const [orders, setOrders] = useState<Order[]>([]);
 
     useEffect(() => {
         if (!isClient || !token) return;
-        const syncOrders = async () => {
-            try {
-                const list = await apiRequest<ApiOrder[]>("/orders/mine", "GET", undefined, token);
-                setOrders((prev) => {
-                    const localById = new Map(prev.map((o) => [o.id, o]));
-                    const apiOrders = list.map((apiOrder) => {
-                        const local = localById.get(apiOrder.id);
-                        return apiOrderToOrder(apiOrder, local?.restaurantName ?? "", local?.deliveryCode ?? "");
-                    });
-                    const apiIds = new Set(list.map((o) => o.id));
-                    const localOnlyOrders = prev.filter((o) => !apiIds.has(o.id));
-                    return [...apiOrders, ...localOnlyOrders];
-                });
-            } catch (error) {
-                console.error("[OrderContext] Failed to sync orders from API:", error);
-            }
-        };
-        syncOrders();
+        apiRequest<ApiOrder[]>("/orders/mine", "GET", undefined, token)
+            .then((list) => setOrders(list.map((o) => apiOrderToOrder(o))))
+            .catch((error) => console.error("[OrderContext] Failed to fetch orders:", error));
     }, [isClient, token]);
 
     const createOrder = async (data: CreateOrderData): Promise<Order> => {
-        const deliveryCode = generateDeliveryCode();
-
-        if (isClient && token && data.cartId) {
-            const checkoutBody: Record<string, unknown> = {
-                cartId: data.cartId,
-                deliveryStreet: data.address.street,
-                deliveryCity: data.address.city,
-                deliveryPostalCode: data.address.zip,
-                deliveryCountry: "France",
-            };
-            if (data.tipAmount !== undefined && data.tipAmount > 0) {
-                checkoutBody.tipAmount = data.tipAmount;
-            }
-            const apiOrder = await apiRequest<ApiOrder>("/orders/checkout", "POST", checkoutBody, token);
-            const order = apiOrderToOrder(apiOrder, data.restaurantName, deliveryCode);
-            setOrders((prev) => [...prev, order]);
-            return order;
-        }
-
-        const order: Order = {
-            id: `order-${Date.now()}`,
-            restaurantId: "",
-            restaurantName: data.restaurantName,
-            items: [],
-            address: data.address,
-            subtotal: 0,
-            deliveryFee: DELIVERY_FEE,
-            serviceFee: SERVICE_FEE,
-            total: DELIVERY_FEE + SERVICE_FEE,
-            status: "PENDING",
-            createdAt: new Date(),
-            deliveryCode,
+        if (!token) throw new Error("Not authenticated");
+        const checkoutBody: Record<string, unknown> = {
+            cartId: data.cartId,
+            deliveryStreet: data.address.street,
+            deliveryCity: data.address.city,
+            deliveryPostalCode: data.address.zip,
+            deliveryCountry: "France",
         };
+        if (data.tipAmount !== undefined && data.tipAmount > 0) {
+            checkoutBody.tipAmount = data.tipAmount;
+        }
+        const apiOrder = await apiRequest<ApiOrder>("/orders/checkout", "POST", checkoutBody, token);
+        const order = apiOrderToOrder(apiOrder, data.restaurantName);
         setOrders((prev) => [...prev, order]);
         return order;
     };
@@ -217,7 +148,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
             const apiOrder = await apiRequest<ApiOrder>(`/orders/${id}`, "GET", undefined, token);
             setOrders((prev) => prev.map((order) => {
                 if (order.id !== id) return order;
-                return apiOrderToOrder(apiOrder, order.restaurantName, order.deliveryCode);
+                return apiOrderToOrder(apiOrder, order.restaurantName);
             }));
         } catch {}
     };
