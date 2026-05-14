@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -34,10 +34,11 @@ export default function CheckoutPage() {
     const [card, setCard] = useState({ number: "", expiry: "", cvv: "", name: "" });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const redirectingToOrder = useRef(false);
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) router.push("/login");
-        if (!isLoading && isAuthenticated && items.length === 0) router.push("/restaurants");
+        if (!isLoading && isAuthenticated && items.length === 0 && !redirectingToOrder.current) router.push("/restaurants");
     }, [isLoading, isAuthenticated, items.length, router]);
 
     useEffect(() => {
@@ -94,6 +95,7 @@ export default function CheckoutPage() {
                 address,
                 restaurantName,
             });
+            redirectingToOrder.current = true;
             clearCart();
             router.push(`/orders/${order.id}`);
         } catch {
