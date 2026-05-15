@@ -30,7 +30,8 @@ export default function DashboardNav({ role, onNavigate }: DashboardNavProps) {
     const { restaurant } = useRestaurant();
     const router = useRouter();
 
-    const links = role === "courier" ? COURIER_LINKS : RESTAURANT_LINKS;
+    const isCourier = role?.toUpperCase() === "COURIER";
+    const links = isCourier ? COURIER_LINKS : RESTAURANT_LINKS;
 
     const handleLogout = () => {
         logout();
@@ -48,14 +49,14 @@ export default function DashboardNav({ role, onNavigate }: DashboardNavProps) {
                 </Link>
                 <div className="bg-stone-50 rounded-xl p-3">
                     <p className="text-xs text-stone-400 font-medium mb-0.5">
-                        {role === "courier" ? "Livreur" : "Restaurateur"}
+                        {isCourier ? "Livreur" : "Restaurateur"}
                     </p>
                     <p className="text-sm font-bold text-stone-900 truncate">
-                        {role === "courier"
+                        {isCourier
                             ? (user?.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "Mon compte")
                             : (restaurant?.name ?? "Mon restaurant")}
                     </p>
-                    {role !== "courier" && restaurant?.city && (
+                    {!isCourier && restaurant?.city && (
                         <p className="text-xs text-stone-400 truncate mt-0.5">{restaurant.address}, {restaurant.city}</p>
                     )}
                 </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { RestaurantProvider } from "@/context/RestaurantContext";
 import DashboardNav from "@/components/dashboard/DashboardNav";
@@ -10,11 +10,25 @@ import { MenuIcon } from "@/components/icons";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, isLoading, user } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
-        if (!isLoading && !isAuthenticated) router.push("/login");
-    }, [isLoading, isAuthenticated, router]);
+        if (isLoading) return;
+        if (!isAuthenticated) { router.push("/login"); return; }
+
+        const roles = user?.roles ?? [];
+        const isCourier = roles.includes("COURIER");
+        const isRestaurateur = roles.includes("RESTAURATEUR");
+
+        if (isCourier && pathname.startsWith("/dashboard/restaurant")) {
+            router.push("/dashboard/courier");
+            return;
+        }
+        if (isRestaurateur && pathname.startsWith("/dashboard/courier")) {
+            router.push("/dashboard/restaurant");
+        }
+    }, [isLoading, isAuthenticated, user, pathname, router]);
 
     if (isLoading || !isAuthenticated) {
         return (

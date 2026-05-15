@@ -11,7 +11,7 @@ export default function Navigation() {
     const { isAuthenticated, isLoading, user, logout } = useAuth();
     const router = useRouter();
     const [menuOpen, setMenuOpen] = useState(false);
-    const { address } = useDeliveryAddress();
+    const { selectedAddress } = useDeliveryAddress();
 
     const displayName = user?.firstName
         ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}`
@@ -36,8 +36,8 @@ export default function Navigation() {
                     {/* Center: address — hidden on mobile */}
                     <div className="hidden md:flex items-center gap-1.5 text-stone-500 text-sm min-w-0 flex-1 justify-center">
                         <MapPinIcon size={16} className="shrink-0 text-accent" />
-                        {address ? (
-                            <span className="truncate max-w-[220px] lg:max-w-xs">{address}</span>
+                        {selectedAddress ? (
+                            <span className="truncate max-w-[220px] lg:max-w-xs">{selectedAddress.label}</span>
                         ) : (
                             <Link href="/" className="truncate max-w-[220px] lg:max-w-xs text-stone-400 hover:text-accent transition-colors">
                                 Où livrer ?
@@ -78,6 +78,18 @@ export default function Navigation() {
                                         Mon dashboard
                                     </Link>
                                 )}
+                                <Link
+                                    href="/profile"
+                                    className="text-sm font-semibold text-stone-600 hover:text-accent transition-colors px-3 py-2 rounded-lg hover:bg-stone-50"
+                                >
+                                    Mon profil
+                                </Link>
+                                <Link
+                                    href="/profile/orders"
+                                    className="text-sm font-semibold text-stone-600 hover:text-accent transition-colors px-3 py-2 rounded-lg hover:bg-stone-50"
+                                >
+                                    Mes commandes
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="cursor-pointer border border-stone-200 text-stone-500 text-sm font-medium px-3 py-2 rounded-lg hover:border-accent hover:text-accent transition-colors"
@@ -141,8 +153,8 @@ export default function Navigation() {
                         {/* Address */}
                         <div className="flex items-center gap-2 px-5 py-3 bg-stone-50 border-b border-stone-100">
                             <MapPinIcon size={15} className="text-accent shrink-0" />
-                            {address ? (
-                                <span className="text-sm text-stone-600">{address}</span>
+                            {selectedAddress ? (
+                                <span className="text-sm text-stone-600">{selectedAddress.label}</span>
                             ) : (
                                 <Link
                                     href="/"

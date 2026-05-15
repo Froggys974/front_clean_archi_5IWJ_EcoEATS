@@ -43,6 +43,8 @@ type ApiDelivery = {
     deliveryFee: number;
     tipAmount: number;
     distanceKm: number;
+    restaurantAddress?: string;
+    deliveryAddress?: string;
     createdAt: string;
 };
 
@@ -53,10 +55,10 @@ type ApiWallet = {
 function apiDeliveryToDelivery(d: ApiDelivery): Delivery {
     return {
         id: d.id,
-        restaurantName: `Restaurant`,
-        restaurantAddress: "",
+        restaurantName: `Restaurant #${d.restaurantId.slice(-6)}`,
+        restaurantAddress: d.restaurantAddress ?? "",
         customerName: `Commande #${d.orderId.slice(-6)}`,
-        customerAddress: "",
+        customerAddress: d.deliveryAddress ?? "",
         items: [],
         subtotal: 0,
         distance: d.distanceKm,
@@ -109,7 +111,7 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
 
         const fetchWallet = async () => {
             try {
-                const wallet = await apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token);
+                const wallet = await apiRequest<ApiWallet>("/wallet/mine", "GET", undefined, token);
                 setWalletBalance(wallet.balance);
             } catch {}
         };
@@ -173,7 +175,7 @@ export function CourierProvider({ children }: { children: React.ReactNode }) {
         setHistory((prev) => [completed, ...prev]);
         setActiveDelivery(null);
         try {
-            const wallet = await apiRequest<ApiWallet>("/deliveries/wallet", "GET", undefined, token);
+            const wallet = await apiRequest<ApiWallet>("/wallet/mine", "GET", undefined, token);
             setWalletBalance(wallet.balance);
         } catch {}
     };

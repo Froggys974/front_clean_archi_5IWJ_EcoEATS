@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useOrder, OrderStatus } from "@/context/OrderContext";
+import { useAuth } from "@/context/AuthContext";
+import { apiRequest } from "@/services/api";
 import { CheckIcon, ClockIcon, TruckIcon, BagIcon } from "@/components/icons";
+import { InvoiceModal, ApiInvoice } from "@/components/orders/InvoiceModal";
 
 const STATUS_STEPS: { status: OrderStatus; label: string; description: string }[] = [
     { status: "PENDING", label: "Commande reçue", description: "Votre commande est transmise au restaurant." },
@@ -22,6 +25,9 @@ const TERMINAL_STATUSES: OrderStatus[] = ["DELIVERED", "REFUSED"];
 export default function OrderTrackingPage() {
     const { id } = useParams<{ id: string }>();
     const { getOrder, refreshOrder } = useOrder();
+    const { token } = useAuth();
+    const [invoice, setInvoice] = useState<ApiInvoice | null>(null);
+    const [invoiceOpen, setInvoiceOpen] = useState(false);
 
     const order = getOrder(id);
 
@@ -35,6 +41,17 @@ export default function OrderTrackingPage() {
         return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, order?.status]);
+
+    const fetchInvoice = async () => {
+        if (!token) return;
+        try {
+            const data = await apiRequest<ApiInvoice>(`/orders/${id}/invoice`, "GET", undefined, token);
+            setInvoice(data);
+            setInvoiceOpen(true);
+        } catch {
+            alert("Facture non disponible.");
+        }
+    };
 
     if (!order) {
         return (
@@ -188,15 +205,27 @@ export default function OrderTrackingPage() {
                 </div>
 
                 {isDelivered && (
-                    <Link
-                        href="/restaurants"
-                        className="block w-full py-3.5 rounded-xl text-center font-bold text-white text-base transition-all hover:shadow-lg hover:scale-[1.01] active:scale-95"
-                        style={{ background: "linear-gradient(to right, var(--primary), var(--accent))" }}
-                    >
-                        Commander à nouveau
-                    </Link>
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={fetchInvoice}
+                            className="cursor-pointer w-full py-3 rounded-xl font-semibold text-accent text-base border border-accent hover:bg-accent/5 transition-all"
+                        >
+                            Voir la facture
+                        </button>
+                        <Link
+                            href="/restaurants"
+                            className="block w-full py-3.5 rounded-xl text-center font-bold text-white text-base transition-all hover:shadow-lg hover:scale-[1.01] active:scale-95"
+                            style={{ background: "linear-gradient(to right, var(--primary), var(--accent))" }}
+                        >
+                            Commander à nouveau
+                        </Link>
+                    </div>
                 )}
             </div>
+
+            {invoiceOpen && invoice && (
+                <InvoiceModal invoice={invoice} onClose={() => setInvoiceOpen(false)} />
+            )}
         </div>
     );
 }
